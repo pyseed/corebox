@@ -1,4 +1,4 @@
-import { Event, Id, Env, Log, State } from './src/corebox.mjs'
+import { Event, Id, Env, Log, State } from './src/obj.mjs'
 
 console.log('demo')
 

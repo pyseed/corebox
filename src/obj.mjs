@@ -1,9 +1,8 @@
 import bunyan from 'bunyan'
-import dmerge from 'deepmerge'
-import uuidv4 from '@bundled-es-modules/uuid/v4.js'
 import { EventEmitter } from 'events'
+import { freeze, id, mergeArrayOverwrite, purify } from './core.mjs'
 
-export const Event = (props) => {
+const Event = (props) => {
   const { maxListeners } = (props || {})
 
   const _emitter = new EventEmitter()
@@ -17,21 +16,19 @@ export const Event = (props) => {
   const once = (eventName, fx) => { _emitter.once(eventName, fx) }
   const listeners = (eventName) => _emitter.listeners(eventName)
 
-  return Object.freeze({ emit, on, off, once, listeners })
+  return freeze({ emit, on, off, once, listeners })
 }
 
-export const Id = () => {
-  const id = () => uuidv4()
-
+const Id = () => {
   return Object.freeze({ id })
 }
 
-export const Env = () => {
+const Env = () => {
   const _env = process.env.NODE_ENV || 'development'
 
   const env = () => _env
 
-  return Object.freeze({ env })
+  return freeze({ env })
 }
 
 // get log for WithLog
@@ -40,7 +37,7 @@ const getLog = (name) => {
   // return console // to switch to console
 }
 
-export const Log = (props) => {
+const Log = (props) => {
   const { name } = (props || {})
 
   const { env } = Env()
@@ -59,7 +56,7 @@ export const Log = (props) => {
   }
   const anyError = () => _anyError
 
-  return Object.freeze({
+  return freeze({
     info,
     warn,
     error,
@@ -68,21 +65,20 @@ export const Log = (props) => {
   })
 }
 
-export const State = (props) => {
-  // use deepmerge to merge x, y but without merging arrays (overwrite arrays versus append)
-  const overwriteArrayMerge = (destinationArray, sourceArray, options) => sourceArray
-
-  let _state = (props || {}).state ? Object.assign({}, props.state) : {}
+const State = (props) => {
+  let _state = purify((props || {}).state || {})
 
   const state = (appendState) => {
     if (appendState) {
       // pure state (freezed)
-      _state = Object.freeze(dmerge(_state, appendState, { arrayMerge: overwriteArrayMerge }))
+      _state = freeze(mergeArrayOverwrite(_state, appendState))
     }
 
     return _state
   }
   const resetState = () => { _state = {} }
 
-  return Object.freeze({ state, resetState })
+  return freeze({ state, resetState })
 }
+
+export { Event, Id, Env, Log, State }
