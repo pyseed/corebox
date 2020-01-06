@@ -6,7 +6,7 @@
     "node": ">=12.0"
   },
   "type": "module",
-  "main": "./src/corebox.mjs",
+  "main": "index.mjs",
   "scripts": {
     "demo": "node --experimental-modules demo.mjs | ./node_modules/.bin/bunyan",
     "test": "standard && node --experimental-modules mocha.mjs tests/*.test.mjs"
@@ -43,7 +43,9 @@
   "dependencies": {
     "@bundled-es-modules/uuid": "^3.3.2",
     "bunyan": "^1.8.12",
-    "deepmerge": "^4.2.2"
+    "deepmerge": "^4.2.2",
+    "mkdirp": "^0.5.1",
+    "simple-glob": "^0.2.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
