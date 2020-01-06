@@ -1,17 +1,17 @@
-import { WithEvent, WithId, WithEnv, WithLog, WithState } from './src/cnbox.mjs'
+import { Event, Id, Env, Log, State } from './src/corebox.mjs'
 
 console.log('demo')
 
 const Jam = () => {
-  const { emit, on } = WithEvent({ maxListeners: 20 })
+  const { emit, on } = Event({ maxListeners: 20 })
 
-  const { id } = WithId()
+  const { id } = Id()
 
-  const { env } = WithEnv()
+  const { env } = Env()
 
-  const { info, warn, error, fatal, anyError } = WithLog()
+  const { info, warn, error, fatal, anyError } = Log()
 
-  const { state, resetState } = WithState()
+  const { state, resetState } = State()
 
   return Object.freeze({
     id,

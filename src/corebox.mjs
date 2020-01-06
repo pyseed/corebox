@@ -3,7 +3,7 @@ import dmerge from 'deepmerge'
 import uuidv4 from '@bundled-es-modules/uuid/v4.js'
 import { EventEmitter } from 'events'
 
-export const WithEvent = (props) => {
+export const Event = (props) => {
   const { maxListeners } = (props || {})
 
   const _emitter = new EventEmitter()
@@ -11,7 +11,6 @@ export const WithEvent = (props) => {
     _emitter.setMaxListeners(maxListeners)
   } // default is 10 if not set
 
-  // const { addListener, listeners, emit, on, off, once } = _emitter
   const emit = (eventName, ...args) => _emitter.emit(eventName, ...args)
   const on = (eventName, fx) => { _emitter.on(eventName, fx) }
   const off = (eventName, fx) => { _emitter.on(eventName, fx) }
@@ -21,13 +20,13 @@ export const WithEvent = (props) => {
   return Object.freeze({ emit, on, off, once, listeners })
 }
 
-export const WithId = () => {
+export const Id = () => {
   const id = () => uuidv4()
 
   return Object.freeze({ id })
 }
 
-export const WithEnv = () => {
+export const Env = () => {
   const _env = process.env.NODE_ENV || 'development'
 
   const env = () => _env
@@ -41,10 +40,10 @@ const getLog = (name) => {
   // return console // to switch to console
 }
 
-export const WithLog = (props) => {
+export const Log = (props) => {
   const { name } = (props || {})
 
-  const { env } = WithEnv()
+  const { env } = Env()
   const _log = getLog(name ? env() + ' ' + name : env())
   let _anyError = false
 
@@ -69,7 +68,7 @@ export const WithLog = (props) => {
   })
 }
 
-export const WithState = (props) => {
+export const State = (props) => {
   // use deepmerge to merge x, y but without merging arrays (overwrite arrays versus append)
   const overwriteArrayMerge = (destinationArray, sourceArray, options) => sourceArray
 
