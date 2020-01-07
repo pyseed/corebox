@@ -39,17 +39,11 @@ const Env = () => {
   return freeze({ env })
 }
 
-// get log for WithLog
-const getLog = (name) => {
-  return bunyan.createLogger({ name: name || '' })
-  // return console // to switch to console
-}
-
+// Log({ log: console }) for console
 const Log = (props) => {
-  const { name } = (props || {})
-
   const { env } = Env()
-  const _log = getLog(name ? env() + ' ' + name : env())
+  const _name = (props || {}).name ? env() + ' ' + props.name : env()
+  const _log = (props || {}).log || bunyan.createLogger({ name: _name })
   let _anyError = false
 
   const info = (...args) => { _log.info(...args) }
@@ -74,15 +68,15 @@ const Log = (props) => {
 }
 
 const State = (props) => {
-  let _state = clone((props || {}).state || {})
+  let _state = props ? clone(props) : {}
 
   const state = (appendState) => {
     if (appendState) {
       // pure state (freezed)
-      _state = freeze(mergeArrayOverwrite(_state, appendState))
+      _state = mergeArrayOverwrite(_state, appendState)
     }
 
-    return _state
+    return freeze(_state)
   }
   const resetState = () => { _state = {} }
 

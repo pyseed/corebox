@@ -8,7 +8,6 @@
   "type": "module",
   "main": "index.mjs",
   "scripts": {
-    "demo": "node --experimental-modules demo.mjs | ./node_modules/.bin/bunyan",
     "test": "standard && node --experimental-modules mocha.mjs tests/*.test.mjs"
   },
   "repository": {
@@ -48,8 +47,11 @@
     "simple-glob": "^0.2.0"
   },
   "devDependencies": {
+    "capture-stdout": "^1.0.0",
     "chai": "^4.2.0",
+    "install": "^0.13.0",
     "mocha": "5.2.0",
+    "npm": "^6.13.4",
     "sinon": "^7.4.0",
     "standard": "^14.3.1"
   }
