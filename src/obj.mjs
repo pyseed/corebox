@@ -1,22 +1,30 @@
 import bunyan from 'bunyan'
 import { EventEmitter } from 'events'
-import { freeze, id, mergeArrayOverwrite, purify } from './core.mjs'
+import { freeze, id, mergeArrayOverwrite, clone } from './core.mjs'
 
 const Event = (props) => {
-  const { maxListeners } = (props || {})
+  let _maxListeners = (props || {}).maxListeners
 
   const _emitter = new EventEmitter()
-  if (maxListeners) {
-    _emitter.setMaxListeners(maxListeners)
+  if (_maxListeners) {
+    _emitter.setMaxListeners(_maxListeners)
   } // default is 10 if not set
 
+  const maxListeners = (max) => {
+    if (max) {
+      _maxListeners = max
+      _emitter.setMaxListeners(_maxListeners)
+    }
+
+    return _maxListeners
+  }
   const emit = (eventName, ...args) => _emitter.emit(eventName, ...args)
   const on = (eventName, fx) => { _emitter.on(eventName, fx) }
   const off = (eventName, fx) => { _emitter.on(eventName, fx) }
   const once = (eventName, fx) => { _emitter.once(eventName, fx) }
   const listeners = (eventName) => _emitter.listeners(eventName)
 
-  return freeze({ emit, on, off, once, listeners })
+  return freeze({ maxListeners, emit, on, off, once, listeners })
 }
 
 const Id = () => {
@@ -66,7 +74,7 @@ const Log = (props) => {
 }
 
 const State = (props) => {
-  let _state = purify((props || {}).state || {})
+  let _state = clone((props || {}).state || {})
 
   const state = (appendState) => {
     if (appendState) {

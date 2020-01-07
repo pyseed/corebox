@@ -2,7 +2,7 @@ import chai from 'chai'
 import sinon from 'sinon'
 import fs from 'fs'
 import mkdirp from 'mkdirp'
-import { isString, freeze, purify, mapobj, apply, any, all, id, timestamp, timestampCompact, load, save, initFile, mkdir, getPathBase, ls, jsonify, sort, sortAscFn, sortDescFn } from '../src/core.mjs'
+import { isString, freeze, clone, mapobj, any, all, id, timestamp, timestampCompact, load, save, initFile, mkdir, getPathBase, ls, jsonify, sort, sortAscFn, sortDescFn } from '../src/core.mjs'
 
 const assert = chai.assert
 const expect = chai.expect
@@ -33,10 +33,10 @@ suite('core', () => {
     assert.throws(() => { o2.three = 3 }, 'Cannot add property three, object is not extensible')
   })
 
-  suite('purify', () => {
+  suite('clone', () => {
     test('empty', () => {
       const source = {}
-      const o = purify(source)
+      const o = clone(source)
       assert.deepEqual(o, {})
       o.one = 1
       assert.deepEqual(o, { one: 1 })
@@ -45,7 +45,7 @@ suite('core', () => {
 
     test('legacy', () => {
       const source = { one: 1 }
-      const o = purify(source)
+      const o = clone(source)
       assert.deepEqual(o, { one: 1 })
 
       o.two = 2
@@ -53,18 +53,9 @@ suite('core', () => {
       assert.deepEqual(source, { one: 1 }, 'source should be intact')
     })
 
-    test('immutable (freeze)', () => {
-      const source = { one: 1 }
-      const o = purify(source, true)
-      assert.deepEqual(o, { one: 1 })
-      assert.throws(() => { o.two = 2 }, 'Cannot add property two, object is not extensible')
-      assert.deepEqual(o, { one: 1 })
-      assert.deepEqual(source, { one: 1 })
-    })
-
     test('subset', () => {
       const source = { one: 1, two: 2 }
-      const o = purify(source, false, ['one'])
+      const o = clone(source, ['one'])
       assert.deepEqual(o, { one: 1 })
 
       o.three = 3
@@ -88,35 +79,6 @@ suite('core', () => {
       const o = mapobj(source, x => x * 2)
       assert.deepEqual(o, { one: 2, two: 4, three: 6 })
       assert.deepEqual(source, { one: 1, two: 2, three: 3 }, 'source should be intact')
-    })
-  })
-
-  suite('apply', () => {
-    let sum
-    const fx = x => { sum += x }
-
-    setup(() => {
-      sum = 0
-    })
-
-    test('empty array', () => {
-      apply([], fx)
-      assert.strictEqual(sum, 0)
-    })
-
-    test('array', () => {
-      apply([1, 2, 3], fx)
-      assert.strictEqual(sum, 6)
-    })
-
-    test('empty object', () => {
-      apply({}, fx)
-      assert.strictEqual(sum, 0)
-    })
-
-    test('object', () => {
-      apply({ one: 1, two: 2, three: 3 }, fx)
-      assert.strictEqual(sum, 6)
     })
   })
 
