@@ -10,6 +10,10 @@ const expect = chai.expect
 suite('core', () => {
   const isOdd = x => x % 2 === 0
 
+  teardown(() => {
+    sinon.restore()
+  })
+
   test('isString', () => {
     assert.strictEqual(isString(undefined), false)
     assert.strictEqual(isString(true), false)
@@ -158,8 +162,6 @@ suite('core', () => {
     const res2 = load(filePath, 'encoding')
     sinon.assert.calledWithExactly(fs.readFileSync, filePath, { encoding: 'encoding' })
     assert.strictEqual(res2, expected)
-
-    sinon.restore()
   })
 
   test('save', () => {
@@ -177,8 +179,6 @@ suite('core', () => {
 
     save(filePath, content, 'encoding', 0o750)
     sinon.assert.calledWithExactly(fs.writeFileSync, filePath, content, { encoding: 'encoding', mode: 0o750 })
-
-    sinon.restore()
   })
 
   suite('initFile', () => {
@@ -195,8 +195,6 @@ suite('core', () => {
       sinon.assert.calledWithExactly(fs.existsSync, filePath)
       sinon.assert.calledWithExactly(fs.writeFileSync, filePath, content, { encoding: 'utf-8', mode: 0o755 })
       assert.strictEqual(res, true, 'has been initialised')
-
-      sinon.restore()
     })
 
     test('file does exists', () => {
@@ -212,8 +210,6 @@ suite('core', () => {
       sinon.assert.calledWithExactly(fs.existsSync, filePath)
       sinon.assert.notCalled(fs.writeFileSync) // file exists so should not be replaced !
       assert.strictEqual(res, false, 'has not been initialised (already exists)')
-
-      sinon.restore()
     })
   })
 
@@ -228,8 +224,6 @@ suite('core', () => {
 
     mkdir(dirPath, 0o750)
     sinon.assert.calledWithExactly(mkdirp.sync, dirPath, { mode: 0o750 })
-
-    sinon.restore()
   })
 
   test('getPathBase', () => {
@@ -251,8 +245,6 @@ suite('core', () => {
       expect(() => {
         ls(basePath, { onlyDir: true, onlyFile: true })
       }).to.throw('onlyDir and onlyFile options can not be set together')
-
-      sinon.restore()
     })
 
     test('only directory, file is a directory', () => {
@@ -271,8 +263,6 @@ suite('core', () => {
       sinon.assert.calledWithExactly(fs.readdirSync, basePath)
       sinon.assert.calledWithExactly(fs.statSync, filePath)
       assert.deepEqual(res, [filePath])
-
-      sinon.restore()
     })
 
     test('only directory, file is not a directory', () => {
@@ -291,8 +281,6 @@ suite('core', () => {
       sinon.assert.calledWithExactly(fs.readdirSync, basePath)
       sinon.assert.calledWithExactly(fs.statSync, filePath)
       assert.deepEqual(res, [])
-
-      sinon.restore()
     })
 
     test('only file, file is a file', () => {
@@ -311,8 +299,6 @@ suite('core', () => {
       sinon.assert.calledWithExactly(fs.readdirSync, basePath)
       sinon.assert.calledWithExactly(fs.statSync, filePath)
       assert.deepEqual(res, [filePath])
-
-      sinon.restore()
     })
 
     test('only file, file is not a file', () => {
@@ -331,8 +317,6 @@ suite('core', () => {
       sinon.assert.calledWithExactly(fs.readdirSync, basePath)
       sinon.assert.calledWithExactly(fs.statSync, filePath)
       assert.deepEqual(res, [])
-
-      sinon.restore()
     })
   })
 
@@ -350,8 +334,6 @@ suite('core', () => {
 
     jsonify(obj, true)
     sinon.assert.calledWithExactly(JSON.stringify, obj, null, 4) // with 4 indent
-
-    sinon.restore()
   })
 
   suite('sort', () => {
