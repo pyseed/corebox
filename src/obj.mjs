@@ -1,6 +1,6 @@
 import bunyan from 'bunyan'
 import { EventEmitter } from 'events'
-import { freeze, id, mergeArrayOverwrite, clone } from './core.mjs'
+import { freeze, mergeArrayOverwrite, clone } from './core.mjs'
 
 const Event = (props) => {
   let _maxListeners = (props || {}).maxListeners
@@ -25,10 +25,6 @@ const Event = (props) => {
   const listeners = (eventName) => _emitter.listeners(eventName)
 
   return freeze({ maxListeners, emit, on, off, once, listeners })
-}
-
-const Id = () => {
-  return Object.freeze({ id: id() })
 }
 
 const Env = () => {
@@ -83,4 +79,4 @@ const State = (props) => {
   return freeze({ state, resetState })
 }
 
-export { Event, Id, Env, Log, State }
+export { Event, Env, Log, State }

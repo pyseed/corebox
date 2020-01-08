@@ -1,7 +1,7 @@
 import chai from 'chai'
 import sinon from 'sinon'
 import CaptureStdout from 'capture-stdout'
-import { Event, Id, Env, Log, State } from '../src/obj.mjs'
+import { Event, Env, Log, State } from '../src/obj.mjs'
 
 const assert = chai.assert
 const expect = chai.expect
@@ -44,13 +44,6 @@ suite('obj', () => {
       await o.emit('message', 'foobar')
       assert.strictEqual(message, 'foobar')
     })
-  })
-
-  test('Id', () => {
-    const o = Id()
-
-    assert.isObject(o)
-    assert.isString(o.id)
   })
 
   suite('Env', () => {
