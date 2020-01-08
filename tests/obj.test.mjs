@@ -50,8 +50,7 @@ suite('obj', () => {
     const o = Id()
 
     assert.isObject(o)
-    assert.isFunction(o.id)
-    assert.isString(o.id())
+    assert.isString(o.id)
   })
 
   suite('Env', () => {

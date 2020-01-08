@@ -28,7 +28,7 @@ const Event = (props) => {
 }
 
 const Id = () => {
-  return Object.freeze({ id })
+  return Object.freeze({ id: id() })
 }
 
 const Env = () => {
