@@ -45,10 +45,12 @@ suite('obj', () => {
       let message = ''
 
       const o = Event()
-      o.on('message', msg => { message = msg })
+      const onRes = o.on('message', msg => { message = msg })
+      assert.equal(onRes, o)
 
-      await o.emit('message', 'foobar')
+      const onEmit = await o.emit('message', 'foobar')
       assert.strictEqual(message, 'foobar')
+      assert.equal(onEmit, o)
     })
   })
 
@@ -164,8 +166,9 @@ suite('obj', () => {
       const o = State({ three: 3 })
 
       assert.deepEqual(o.state(), { three: 3 })
-      o.resetState()
+      const resetStateRes = o.resetState()
       assert.deepEqual(o.state(), {})
+      assert.equal(resetStateRes, o)
     })
   })
 })

@@ -18,10 +18,22 @@ const Event = (props) => {
 
     return _maxListeners
   }
-  const emit = (eventName, ...args) => _emitter.emit(eventName, ...args)
-  const on = (eventName, fx) => { _emitter.on(eventName, fx) }
-  const off = (eventName, fx) => { _emitter.on(eventName, fx) }
-  const once = (eventName, fx) => { _emitter.once(eventName, fx) }
+  const emit = function (eventName, ...args) {
+    _emitter.emit(eventName, ...args)
+    return this
+  }
+  const on = function (eventName, fx) {
+    _emitter.on(eventName, fx)
+    return this
+  }
+  const off = function (eventName, fx) {
+    _emitter.on(eventName, fx)
+    return this
+  }
+  const once = function (eventName, fx) {
+    _emitter.once(eventName, fx)
+    return this
+  }
   const listeners = (eventName) => _emitter.listeners(eventName)
 
   return freeze({ maxListeners, emit, on, off, once, listeners })
@@ -38,11 +50,18 @@ const Log = (props) => {
 
   const anyError = () => _anyError
 
-  const info = (...args) => { _log.info(...args) }
-  const warn = (...args) => { _log.warn(...args) }
-  const error = (...args) => {
+  const info = function (...args) {
+    _log.info(...args)
+    return this
+  }
+  const warn = function (...args) {
+    _log.warn(...args)
+    return this
+  }
+  const error = function (...args) {
     _anyError = true
     _log.error(...args)
+    return this
   }
   const fatal = (...args) => {
     error('FATAL', ...args)
@@ -70,7 +89,10 @@ const State = (props) => {
 
     return freeze(_state)
   }
-  const resetState = () => { _state = {} }
+  const resetState = function () {
+    _state = {}
+    return this
+  }
 
   return freeze({ state, resetState })
 }
