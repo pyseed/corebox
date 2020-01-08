@@ -5,6 +5,8 @@ import mkdirp from 'mkdirp'
 import path from 'path'
 import uuidv4 from '@bundled-es-modules/uuid/v4.js'
 
+const env = () => process.env.NODE_ENV || 'development'
+
 const isString = (str) => typeof str === 'string' || str instanceof String
 
 /**
@@ -288,4 +290,4 @@ const sort = (arr, fn) => {
 const sortAscFn = (a, b) => a > b ? 1 : -1
 const sortDescFn = (a, b) => a > b ? -1 : 1
 
-export { isString, merge, mergeArrayOverwrite, freeze, clone, mapobj, any, all, id, timestamp, timestampCompact, load, save, initFile, mkdir, globify, getPathBase, ls, jsonify, sort, sortAscFn, sortDescFn }
+export { env, isString, merge, mergeArrayOverwrite, freeze, clone, mapobj, any, all, id, timestamp, timestampCompact, load, save, initFile, mkdir, globify, getPathBase, ls, jsonify, sort, sortAscFn, sortDescFn }

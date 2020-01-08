@@ -1,7 +1,7 @@
 import chai from 'chai'
 import sinon from 'sinon'
 import CaptureStdout from 'capture-stdout'
-import { Event, Env, Log, State } from '../src/obj.mjs'
+import { Event, Log, State } from '../src/obj.mjs'
 
 const assert = chai.assert
 const expect = chai.expect
@@ -16,6 +16,12 @@ suite('obj', () => {
     test('init default', async () => {
       const o = Event()
 
+      assert.isFunction(o.maxListeners)
+      assert.isFunction(o.emit)
+      assert.isFunction(o.on)
+      assert.isFunction(o.off)
+      assert.isFunction(o.once)
+      assert.isFunction(o.listeners)
       assert.isUndefined(o.maxListeners())
     })
 
@@ -46,33 +52,20 @@ suite('obj', () => {
     })
   })
 
-  suite('Env', () => {
-    test('init default', () => {
-      const o = Env()
-
-      assert.isObject(o)
-      assert.isFunction(o.env)
-      assert.strictEqual(o.env(), 'development')
-    })
-
-    test('env', () => {
-      const fakeEnv = 'fake env'
-      process.env.NODE_ENV = fakeEnv
-
-      const o = Env()
-      assert.strictEqual(o.env(), fakeEnv)
-    })
-  })
-
   suite('Log', () => {
     let FakeLog
 
     suiteSetup(() => {
       FakeLog = () => {
+        let _anyError = false
+
         return {
+          env: 'development',
+          name: 'default',
+          anyError: () => _anyError,
           info: msg => {},
           warn: msg => {},
-          error: msg => {}
+          error: msg => { _anyError = true }
         }
       }
     })
@@ -81,11 +74,16 @@ suite('obj', () => {
       const o = Log()
 
       assert.isObject(o)
+      assert.isString(o.env)
+      assert.isString(o.name)
+      assert.isFunction(o.anyError)
       assert.isFunction(o.info)
       assert.isFunction(o.warn)
       assert.isFunction(o.error)
       assert.isFunction(o.fatal)
       assert.isFunction(o.anyError)
+      assert.strictEqual(o.env, 'development')
+      assert.strictEqual(o.name, 'default')
       assert.strictEqual(o.anyError(), false)
     })
 

@@ -1,6 +1,6 @@
 import bunyan from 'bunyan'
 import { EventEmitter } from 'events'
-import { freeze, mergeArrayOverwrite, clone } from './core.mjs'
+import { env as envCore, freeze, mergeArrayOverwrite, clone } from './core.mjs'
 
 const Event = (props) => {
   let _maxListeners = (props || {}).maxListeners
@@ -27,20 +27,16 @@ const Event = (props) => {
   return freeze({ maxListeners, emit, on, off, once, listeners })
 }
 
-const Env = () => {
-  const _env = process.env.NODE_ENV || 'development'
-
-  const env = () => _env
-
-  return freeze({ env })
-}
-
 // Log({ log: console }) for console
 const Log = (props) => {
-  const { env } = Env()
-  const _name = (props || {}).name ? env() + ' ' + props.name : env()
-  const _log = (props || {}).log || bunyan.createLogger({ name: _name })
+  props = props || {}
+
+  const env = envCore()
+  const name = props.name || 'default'
   let _anyError = false
+  const _log = props.log || bunyan.createLogger({ name: env + ' ' + name })
+
+  const anyError = () => _anyError
 
   const info = (...args) => { _log.info(...args) }
   const warn = (...args) => { _log.warn(...args) }
@@ -52,14 +48,15 @@ const Log = (props) => {
     error('FATAL', ...args)
     process.exit(-1)
   }
-  const anyError = () => _anyError
 
   return freeze({
+    env,
+    name,
+    anyError,
     info,
     warn,
     error,
-    fatal,
-    anyError
+    fatal
   })
 }
 
@@ -68,8 +65,7 @@ const State = (props) => {
 
   const state = (appendState) => {
     if (appendState) {
-      // pure state (freezed)
-      _state = mergeArrayOverwrite(_state, appendState)
+      _state = mergeArrayOverwrite(_state, appendState) // pure state
     }
 
     return freeze(_state)
@@ -79,4 +75,4 @@ const State = (props) => {
   return freeze({ state, resetState })
 }
 
-export { Event, Env, Log, State }
+export { Event, Log, State }

@@ -2,7 +2,7 @@ import chai from 'chai'
 import sinon from 'sinon'
 import fs from 'fs'
 import mkdirp from 'mkdirp'
-import { isString, freeze, clone, mapobj, any, all, id, timestamp, timestampCompact, load, save, initFile, mkdir, getPathBase, ls, jsonify, sort, sortAscFn, sortDescFn } from '../src/core.mjs'
+import { env, isString, freeze, clone, mapobj, any, all, id, timestamp, timestampCompact, load, save, initFile, mkdir, getPathBase, ls, jsonify, sort, sortAscFn, sortDescFn } from '../src/core.mjs'
 
 const assert = chai.assert
 const expect = chai.expect
@@ -11,7 +11,20 @@ suite('core', () => {
   const isOdd = x => x % 2 === 0
 
   teardown(() => {
+    delete process.env.NODE_ENV
     sinon.restore()
+  })
+
+  suite('Env', () => {
+    test('default', () => {
+      assert.strictEqual(env(), 'development')
+    })
+
+    test('env', () => {
+      const fakeEnv = 'fake env'
+      process.env.NODE_ENV = fakeEnv
+      assert.strictEqual(env(), fakeEnv)
+    })
   })
 
   test('isString', () => {
