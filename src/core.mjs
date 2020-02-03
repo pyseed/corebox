@@ -61,7 +61,7 @@ const clone = (obj, keys) => {
  * map to new object (original is kept as it)
  * to set a subset of obj, specify the selected keys
  * @param {Object}    obj    source object
- * @param {Function}  fx     function to apply
+ * @param {Function}  fx     function to apply fx(x, key)
  * @param {*}         ctx    this for map function (optional)
  * @return mapped object
  */
@@ -70,7 +70,7 @@ const mapobj = (obj, fx, ctx) => {
 
   const newObj = {}
   for (const key of Object.keys(obj)) {
-    newObj[key] = fx.call(ctx, obj[key])
+    newObj[key] = fx.call(ctx, obj[key], key)
   }
   return newObj
 }
