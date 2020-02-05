@@ -48,7 +48,11 @@ const Log = (props) => {
   let _anyError = false
   const _log = props.log || bunyan.createLogger({ name: env + ' ' + name })
 
+  const history = props.history || false
+  const _errors = []
+
   const anyError = () => _anyError
+  const errors = () => _errors
 
   const info = function (...args) {
     _log.info(...args)
@@ -61,6 +65,7 @@ const Log = (props) => {
   const error = function (...args) {
     _anyError = true
     _log.error(...args)
+    if (history) _errors.push(args.join(' '))
     return this
   }
   const fatal = (...args) => {
@@ -72,6 +77,7 @@ const Log = (props) => {
     env,
     name,
     anyError,
+    errors,
     info,
     warn,
     error,

@@ -116,6 +116,20 @@ suite('obj', () => {
       assert.strictEqual(o.anyError(), true)
     })
 
+    test('errors()', () => {
+      const o = Log({ log: FakeLog(), history: true })
+
+      assert.deepEqual(o.errors(), [])
+      o.info('fake info')
+      assert.deepEqual(o.errors(), [])
+      o.warn('fake warn')
+      assert.deepEqual(o.errors(), [])
+      o.error('fake error 1')
+      assert.deepEqual(o.errors(), ['fake error 1'])
+      o.error('fake error 2')
+      assert.deepEqual(o.errors(), ['fake error 1', 'fake error 2'])
+    })
+
     test('bunyan', () => {
       const fakeEnv = 'fake env bunyan'
       process.env.NODE_ENV = fakeEnv
