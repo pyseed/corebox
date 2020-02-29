@@ -45,8 +45,9 @@ const Log = (props) => {
 
   const env = envCore()
   const name = props.name || 'default'
+  const level = props.level || 'debug'
   let _anyError = false
-  const _log = props.log || bunyan.createLogger({ name: env + ' ' + name })
+  const _log = props.log || bunyan.createLogger({ name: env + ' ' + name, level })
 
   const history = props.history || false
   const _errors = []
@@ -54,6 +55,10 @@ const Log = (props) => {
   const anyError = () => _anyError
   const errors = () => _errors
 
+  const debug = function (...args) {
+    _log.debug(...args)
+    return this
+  }
   const info = function (...args) {
     _log.info(...args)
     return this
@@ -78,6 +83,7 @@ const Log = (props) => {
     name,
     anyError,
     errors,
+    debug,
     info,
     warn,
     error,
