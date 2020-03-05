@@ -40,11 +40,16 @@ const Event = (props) => {
   return freeze({ maxListeners, emit, on, off, once, listeners })
 }
 
-// Log({ level: 'debug/info' })                     for bunyan
 // Log({ log: 'console', level: 'debug/info' })     for https://www.npmjs.com/package/console-log-level
+// Log({ log: 'bunyan', level: 'debug/info' })      for https://github.com/trentm/node-bunyan
+// Log({ level: 'debug/info' })                     for bunyan as default
 // Log({ log: instance, level: 'debug/info' })      for any log system
 // Log({ log: instance })                           for any log system that does not support log level
 const Log = (props) => {
+  const createBunyanLogger = ({ env, name, level }) => {
+    return bunyan.createLogger({ name: env + ' ' + name, level })
+  }
+
   props = props || {}
 
   const env = envCore()
@@ -55,11 +60,13 @@ const Log = (props) => {
   if (props.log) {
     if (props.log === 'console') {
       _log = consoleLog({ level })
+    } else if (props.log === 'bunyan') {
+      _log = createBunyanLogger({ env, name, level })
     } else {
       _log = props.log
     }
   } else {
-    _log = bunyan.createLogger({ name: env + ' ' + name, level })
+    _log = _log = createBunyanLogger({ env, name, level })
   }
 
   const history = props.history || false
