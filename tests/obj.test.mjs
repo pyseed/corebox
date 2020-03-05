@@ -56,6 +56,7 @@ suite('obj', () => {
 
   suite('Log', () => {
     let FakeLog
+    let customMarker = false
 
     suiteSetup(() => {
       FakeLog = () => {
@@ -63,8 +64,9 @@ suite('obj', () => {
 
         return {
           env: 'development',
-          name: 'default',
+          name: 'custom',
           anyError: () => _anyError,
+          debug: msg => { customMarker = true },
           info: msg => {},
           warn: msg => {},
           error: msg => { _anyError = true }
@@ -72,10 +74,15 @@ suite('obj', () => {
       }
     })
 
+    teardown(() => {
+      customMarker = false
+    })
+
     test('init default', () => {
       const o = Log()
 
       assert.isObject(o)
+      assert.isFalse(customMarker)
       assert.isString(o.env)
       assert.isString(o.name)
       assert.isFunction(o.anyError)
@@ -87,6 +94,24 @@ suite('obj', () => {
       assert.strictEqual(o.env, 'development')
       assert.strictEqual(o.name, 'default')
       assert.strictEqual(o.anyError(), false)
+    })
+
+    test('init custom log', () => {
+      const o = Log({ log: FakeLog() })
+
+      assert.isObject(o)
+      assert.isFunction(o.debug)
+      o.debug()
+      assert.isTrue(customMarker)
+    })
+
+    test('init console-log-level', () => {
+      const o = Log({ log: 'console' })
+
+      assert.isOk(o)
+      assert.isFalse(customMarker)
+      assert.isFunction(o.debug)
+      assert.isFunction(o.info)
     })
 
     test('log reveal', () => {
@@ -136,18 +161,27 @@ suite('obj', () => {
       const name = 'mylog'
 
       const captureStdout = new CaptureStdout()
-
       const o = Log({ name })
       captureStdout.startCapture()
       o.info('fake info')
       captureStdout.stopCapture()
 
       const arrJsonStdout = captureStdout.getCapturedText().map(JSON.parse)
-      captureStdout.clearCaptureText()
 
       assert.strictEqual(arrJsonStdout.length, 1)
       assert.strictEqual(arrJsonStdout[0].name, fakeEnv + ' ' + name)
       assert.strictEqual(arrJsonStdout[0].msg, 'fake info')
+    })
+
+    test('console-log-level', () => {
+      const o = Log({ log: 'console' })
+
+      const captureStdout = new CaptureStdout()
+      captureStdout.startCapture()
+      o.info('fake info')
+      captureStdout.stopCapture()
+
+      assert.strictEqual(captureStdout.getCapturedText()[0], 'fake info')
     })
   })
 

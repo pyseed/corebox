@@ -1,4 +1,5 @@
 import bunyan from 'bunyan'
+import consoleLog from 'console-log-level'
 import { EventEmitter } from 'events'
 import { env as envCore, freeze, mergeArrayOverwrite, clone } from './core.mjs'
 
@@ -39,7 +40,10 @@ const Event = (props) => {
   return freeze({ maxListeners, emit, on, off, once, listeners })
 }
 
-// Log({ log: console }) for console
+// Log({ level: 'debug/info' })                     for bunyan
+// Log({ log: 'console', level: 'debug/info' })     for https://www.npmjs.com/package/console-log-level
+// Log({ log: instance, level: 'debug/info' })      for any log system
+// Log({ log: instance })                           for any log system that does not support log level
 const Log = (props) => {
   props = props || {}
 
@@ -47,7 +51,16 @@ const Log = (props) => {
   const name = props.name || 'default'
   const level = props.level || 'debug'
   let _anyError = false
-  const _log = props.log || bunyan.createLogger({ name: env + ' ' + name, level })
+  let _log
+  if (props.log) {
+    if (props.log === 'console') {
+      _log = consoleLog({ level })
+    } else {
+      _log = props.log
+    }
+  } else {
+    _log = bunyan.createLogger({ name: env + ' ' + name, level })
+  }
 
   const history = props.history || false
   const _errors = []
