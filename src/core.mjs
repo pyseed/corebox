@@ -49,9 +49,7 @@ const clone = (obj, keys) => {
 
   if (keys !== undefined) {
     source = {}
-    for (const key of keys) {
-      source[key] = obj[key]
-    }
+    keys.forEach(key => { source[key] = obj[key] })
   }
 
   return merge({}, source)
@@ -66,9 +64,7 @@ const clone = (obj, keys) => {
 const mapobj = (obj, fx) => {
   const newObj = {}
 
-  for (const key of Object.keys(obj)) {
-    newObj[key] = fx(obj[key], key)
-  }
+  Object.keys(obj).forEach(key => { newObj[key] = fx(obj[key], key) })
 
   return newObj
 }
