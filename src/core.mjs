@@ -59,42 +59,36 @@ const clone = (obj, keys) => {
 
 /**
  * map to new object (original is kept as it)
- * to set a subset of obj, specify the selected keys
  * @param {Object}    obj    source object
  * @param {Function}  fx     function to apply fx(x, key)
- * @param {*}         ctx    this for map function (optional)
  * @return mapped object
  */
-const mapobj = (obj, fx, ctx) => {
-  ctx = ctx || this
-
+const mapobj = (obj, fx) => {
   const newObj = {}
+
   for (const key of Object.keys(obj)) {
-    newObj[key] = fx.call(ctx, obj[key], key)
+    newObj[key] = fx(obj[key], key)
   }
+
   return newObj
 }
 
 /**
  * any to object or array
- * to set a subset of obj, specify the selected keys
  * @param {Object/Array}    objOrArr    source object/array
  * @param {Function}        fx          function to apply
- * @param {*}               ctx         this for map function (optional)
  * @return (bool) true if at least one mapped function fx return true
  */
-const any = (objOrArr, fx, ctx) => {
-  ctx = ctx || this
-
+const any = (objOrArr, fx) => {
   if (Array.isArray(objOrArr)) {
     for (const item of objOrArr) {
-      if (fx.call(ctx, item)) {
+      if (fx(item)) {
         return true
       }
     }
   } else {
     for (const key of Object.keys(objOrArr)) {
-      if (fx.call(ctx, objOrArr[key])) {
+      if (fx(objOrArr[key])) {
         return true
       }
     }
@@ -105,18 +99,14 @@ const any = (objOrArr, fx, ctx) => {
 
 /**
  * all to object or array
- * to set a subset of obj, specify the selected keys
  * @param {Object/Array}    objOrArr    source object/array
  * @param {Function}        fx          function to apply
- * @param {*}               ctx         this for map function (optional)
  * @return (bool) true if at all mapped function fx return true
  */
-const all = (objOrArr, fx, ctx) => {
-  ctx = ctx || this
-
+const all = (objOrArr, fx) => {
   if (Array.isArray(objOrArr)) {
     for (const item of objOrArr) {
-      if (!fx.call(ctx, item)) {
+      if (!fx(item)) {
         return false
       }
     }
@@ -125,7 +115,7 @@ const all = (objOrArr, fx, ctx) => {
   } else {
     const keys = Object.keys(objOrArr)
     for (const key of keys) {
-      if (!fx.call(ctx, objOrArr[key])) {
+      if (!fx(objOrArr[key])) {
         return false
       }
     }
@@ -189,7 +179,7 @@ const save = (filePath, content, encoding, mode) => fs.writeFileSync(filePath, c
  */
 const initFile = (filePath, contentFx) => {
   if (!fs.existsSync(filePath)) {
-    save(filePath, contentFx.call())
+    save(filePath, contentFx())
     return true
   }
 
@@ -285,7 +275,6 @@ const sort = (arr, fn) => {
   sorted.sort(fn)
   return sorted
 }
-
 // sorting functions
 const sortAscFn = (a, b) => a > b ? 1 : -1
 const sortDescFn = (a, b) => a > b ? -1 : 1
