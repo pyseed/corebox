@@ -115,17 +115,18 @@ const Log = (props = {}) => {
   })
 }
 
-const State = (props) => {
-  let _state = props ? clone(props) : {}
+const State = (props = {}) => {
+  let _state = clone(props)
 
-  const state = (appendState) => {
+  function state (appendState) {
     if (appendState) {
       _state = mergeArrayOverwrite(_state, appendState) // pure state
     }
 
     return freeze(_state)
   }
-  const resetState = function () {
+
+  function resetState () {
     _state = {}
     return this
   }
