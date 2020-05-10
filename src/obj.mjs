@@ -3,41 +3,39 @@ import consoleLog from 'console-log-level'
 import { EventEmitter } from 'events'
 import { env as envCore, freeze, mergeArrayOverwrite, clone } from './core.mjs'
 
-const Event = (props) => {
-  let _maxListeners = (props || {}).maxListeners
+const Event = (props = {}) => {
+  const maxListeners = props.maxListeners || 0
+  const emitter = new EventEmitter()
 
-  const _emitter = new EventEmitter()
-  if (_maxListeners) {
-    _emitter.setMaxListeners(_maxListeners)
+  if (maxListeners > 0) {
+    emitter.setMaxListeners(maxListeners)
   } // default is 10 if not set
 
-  const maxListeners = (max) => {
-    if (max) {
-      _maxListeners = max
-      _emitter.setMaxListeners(_maxListeners)
-    }
+  function emit (eventName, ...args) {
+    emitter.emit(eventName, ...args)
+    return this
+  }
 
-    return _maxListeners
-  }
-  const emit = function (eventName, ...args) {
-    _emitter.emit(eventName, ...args)
+  function on (eventName, fx) {
+    emitter.on(eventName, fx)
     return this
   }
-  const on = function (eventName, fx) {
-    _emitter.on(eventName, fx)
-    return this
-  }
-  const off = function (eventName, fx) {
-    _emitter.on(eventName, fx)
-    return this
-  }
-  const once = function (eventName, fx) {
-    _emitter.once(eventName, fx)
-    return this
-  }
-  const listeners = (eventName) => _emitter.listeners(eventName)
 
-  return freeze({ maxListeners, emit, on, off, once, listeners })
+  function off (eventName, fx) {
+    emitter.on(eventName, fx)
+    return this
+  }
+
+  function once (eventName, fx) {
+    emitter.once(eventName, fx)
+    return this
+  }
+
+  function listeners (eventName) {
+    return emitter.listeners(eventName)
+  }
+
+  return freeze({ emit, on, off, once, listeners })
 }
 
 // Log({ log: 'console', level: 'debug/info' })     for https://www.npmjs.com/package/console-log-level

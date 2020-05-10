@@ -16,29 +16,11 @@ suite('obj', () => {
     test('init default', async () => {
       const o = Event()
 
-      assert.isFunction(o.maxListeners)
       assert.isFunction(o.emit)
       assert.isFunction(o.on)
       assert.isFunction(o.off)
       assert.isFunction(o.once)
       assert.isFunction(o.listeners)
-      assert.isUndefined(o.maxListeners())
-    })
-
-    test('init with max listeners', async () => {
-      const maxListeners = 20
-
-      const o = Event({ maxListeners })
-      assert(o.maxListeners(), maxListeners)
-    })
-
-    test('maxListeners', async () => {
-      const maxListeners = 20
-
-      const o = Event()
-      assert.isUndefined(o.maxListeners()) // default
-      o.maxListeners(maxListeners)
-      assert(o.maxListeners(), maxListeners)
     })
 
     test('on / emit', async () => {
