@@ -42,16 +42,16 @@ suite('obj', () => {
 
     suiteSetup(() => {
       FakeLog = () => {
-        let _anyError = false
+        let _someError = false
 
         return {
           env: 'development',
           name: 'custom',
-          anyError: () => _anyError,
+          someError: () => _someError,
           debug: msg => { customMarker = true },
           info: msg => {},
           warn: msg => {},
-          error: msg => { _anyError = true }
+          error: msg => { _someError = true }
         }
       }
     })
@@ -67,15 +67,14 @@ suite('obj', () => {
       assert.isFalse(customMarker)
       assert.isString(o.env)
       assert.isString(o.name)
-      assert.isFunction(o.anyError)
+      assert.isFunction(o.someError)
       assert.isFunction(o.info)
       assert.isFunction(o.warn)
       assert.isFunction(o.error)
       assert.isFunction(o.fatal)
-      assert.isFunction(o.anyError)
       assert.strictEqual(o.env, 'development')
       assert.strictEqual(o.name, 'default')
-      assert.strictEqual(o.anyError(), false)
+      assert.strictEqual(o.someError(), false)
     })
 
     test('init custom log', () => {
@@ -111,16 +110,16 @@ suite('obj', () => {
       sinon.assert.calledWithExactly(errorSpy, 'fake error')
     })
 
-    test('anyError()', () => {
+    test('someError()', () => {
       const o = Log({ log: FakeLog() })
 
-      assert.strictEqual(o.anyError(), false)
+      assert.strictEqual(o.someError(), false)
       o.info('fake info')
-      assert.strictEqual(o.anyError(), false)
+      assert.strictEqual(o.someError(), false)
       o.warn('fake warn')
-      assert.strictEqual(o.anyError(), false)
+      assert.strictEqual(o.someError(), false)
       o.error('fake error')
-      assert.strictEqual(o.anyError(), true)
+      assert.strictEqual(o.someError(), true)
     })
 
     test('errors()', () => {

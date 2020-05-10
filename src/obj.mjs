@@ -43,55 +43,61 @@ const Event = (props = {}) => {
 // Log({ level: 'debug/info' })                     for bunyan as default
 // Log({ log: instance, level: 'debug/info' })      for any log system
 // Log({ log: instance })                           for any log system that does not support log level
-const Log = (props) => {
-  const createBunyanLogger = ({ env, name, level }) => {
+// prop history to true will allow to get errors history with errors()
+const Log = (props = {}) => {
+  function createBunyanLogger ({ env, name, level }) {
     return bunyan.createLogger({ name: env + ' ' + name, level })
   }
 
-  props = props || {}
+  function dispatchLog (log) {
+    if (log) {
+      if (log === 'console') {
+        return consoleLog({ level })
+      } else if (log === 'bunyan') {
+        return createBunyanLogger({ env, name, level })
+      } else { // raw log
+        return log
+      }
+    } else { // default log
+      return createBunyanLogger({ env, name, level })
+    }
+  }
 
   const env = envCore()
   const name = props.name || 'default'
   const level = props.level || 'debug'
-  let _anyError = false
-  let _log
-  if (props.log) {
-    if (props.log === 'console') {
-      _log = consoleLog({ level })
-    } else if (props.log === 'bunyan') {
-      _log = createBunyanLogger({ env, name, level })
-    } else {
-      _log = props.log
-    }
-  } else {
-    _log = _log = createBunyanLogger({ env, name, level })
-  }
-
   const history = props.history || false
+  let _someError = false
   const _errors = []
 
-  const anyError = () => _anyError
+  const _log = dispatchLog(props.log)
+
+  const someError = () => _someError
   const errors = () => _errors
 
-  const debug = function (...args) {
+  function debug (...args) {
     _log.debug(...args)
     return this
   }
-  const info = function (...args) {
+
+  function info (...args) {
     _log.info(...args)
     return this
   }
-  const warn = function (...args) {
+
+  function warn (...args) {
     _log.warn(...args)
     return this
   }
-  const error = function (...args) {
-    _anyError = true
+
+  function error (...args) {
+    _someError = true
     _log.error(...args)
     if (history) _errors.push(args.join(' '))
     return this
   }
-  const fatal = (...args) => {
+
+  function fatal (...args) {
     error('FATAL', ...args)
     process.exit(-1)
   }
@@ -99,7 +105,7 @@ const Log = (props) => {
   return freeze({
     env,
     name,
-    anyError,
+    someError,
     errors,
     debug,
     info,
