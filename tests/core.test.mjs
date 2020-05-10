@@ -2,7 +2,7 @@ import chai from 'chai'
 import sinon from 'sinon'
 import fs from 'fs'
 import mkdirp from 'mkdirp'
-import { env, isString, freeze, clone, mapobj, any, all, id, timestamp, timestampCompact, load, save, initFile, mkdir, getPathBase, ls, jsonify, sort, sortAscFn, sortDescFn } from '../src/core.mjs'
+import { env, isString, freeze, clone, mapobj, some, every, id, timestamp, timestampCompact, load, save, initFile, mkdir, getPathBase, ls, jsonify, sort, sortAscFn, sortDescFn } from '../src/core.mjs'
 
 const assert = chai.assert
 const expect = chai.expect
@@ -99,39 +99,39 @@ suite('core', () => {
     })
   })
 
-  suite('any', () => {
+  suite('some', () => {
     test('array', () => {
-      assert.strictEqual(any([], isOdd), false)
-      assert.strictEqual(any([1], isOdd), false)
-      assert.strictEqual(any([1, 3], isOdd), false)
-      assert.strictEqual(any([2], isOdd), true)
-      assert.strictEqual(any([1, 2, 3], isOdd), true)
+      assert.strictEqual(some([], isOdd), false)
+      assert.strictEqual(some([1], isOdd), false)
+      assert.strictEqual(some([1, 3], isOdd), false)
+      assert.strictEqual(some([2], isOdd), true)
+      assert.strictEqual(some([1, 2, 3], isOdd), true)
     })
 
     test('object', () => {
-      assert.strictEqual(any({}, isOdd), false)
-      assert.strictEqual(any({ one: 1 }, isOdd), false)
-      assert.strictEqual(any({ one: 1, three: 3 }, isOdd), false)
-      assert.strictEqual(any({ two: 2 }, isOdd), true)
-      assert.strictEqual(any({ one: 1, two: 2, three: 3 }, isOdd), true)
+      assert.strictEqual(some({}, isOdd), false)
+      assert.strictEqual(some({ one: 1 }, isOdd), false)
+      assert.strictEqual(some({ one: 1, three: 3 }, isOdd), false)
+      assert.strictEqual(some({ two: 2 }, isOdd), true)
+      assert.strictEqual(some({ one: 1, two: 2, three: 3 }, isOdd), true)
     })
   })
 
-  suite('all', () => {
+  suite('every', () => {
     test('array', () => {
-      assert.strictEqual(all([], isOdd), false)
-      assert.strictEqual(all([1], isOdd), false)
-      assert.strictEqual(all([1, 2], isOdd), false)
-      assert.strictEqual(all([2], isOdd), true)
-      assert.strictEqual(all([2, 4], isOdd), true)
+      assert.strictEqual(every([], isOdd), true)
+      assert.strictEqual(every([1], isOdd), false)
+      assert.strictEqual(every([1, 2], isOdd), false)
+      assert.strictEqual(every([2], isOdd), true)
+      assert.strictEqual(every([2, 4], isOdd), true)
     })
 
     test('object', () => {
-      assert.strictEqual(all({}, isOdd), false)
-      assert.strictEqual(all({ one: 1 }, isOdd), false)
-      assert.strictEqual(all({ one: 1, two: 2 }, isOdd), false)
-      assert.strictEqual(all({ two: 2 }, isOdd), true)
-      assert.strictEqual(all({ two: 2, four: 4 }, isOdd), true)
+      assert.strictEqual(every({}, isOdd), true)
+      assert.strictEqual(every({ one: 1 }, isOdd), false)
+      assert.strictEqual(every({ one: 1, two: 2 }, isOdd), false)
+      assert.strictEqual(every({ two: 2 }, isOdd), true)
+      assert.strictEqual(every({ two: 2, four: 4 }, isOdd), true)
     })
   })
 

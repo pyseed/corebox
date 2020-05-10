@@ -74,23 +74,19 @@ const mapobj = (obj, fx) => {
 }
 
 /**
- * any to object or array
+ * some to object or array
  * @param {Object/Array}    objOrArr    source object/array
  * @param {Function}        fx          function to apply
  * @return (bool) true if at least one mapped function fx return true
  */
-const any = (objOrArr, fx) => {
+const some = (objOrArr, fx) => {
   if (Array.isArray(objOrArr)) {
-    for (const item of objOrArr) {
-      if (fx(item)) {
-        return true
-      }
-    }
-  } else {
-    for (const key of Object.keys(objOrArr)) {
-      if (fx(objOrArr[key])) {
-        return true
-      }
+    return objOrArr.some(fx)
+  }
+
+  for (const key of Object.keys(objOrArr)) {
+    if (fx(objOrArr[key])) {
+      return true
     }
   }
 
@@ -98,30 +94,24 @@ const any = (objOrArr, fx) => {
 }
 
 /**
- * all to object or array
+ * every to object or array
  * @param {Object/Array}    objOrArr    source object/array
  * @param {Function}        fx          function to apply
  * @return (bool) true if at all mapped function fx return true
  */
-const all = (objOrArr, fx) => {
+const every = (objOrArr, fx) => {
   if (Array.isArray(objOrArr)) {
-    for (const item of objOrArr) {
-      if (!fx(item)) {
-        return false
-      }
-    }
-
-    return objOrArr.length > 0
-  } else {
-    const keys = Object.keys(objOrArr)
-    for (const key of keys) {
-      if (!fx(objOrArr[key])) {
-        return false
-      }
-    }
-
-    return keys.length > 0
+    return objOrArr.every(fx)
   }
+
+  const keys = Object.keys(objOrArr)
+  for (const key of keys) {
+    if (!fx(objOrArr[key])) {
+      return false
+    }
+  }
+
+  return true
 }
 
 /**
@@ -279,4 +269,4 @@ const sort = (arr, fn) => {
 const sortAscFn = (a, b) => a > b ? 1 : -1
 const sortDescFn = (a, b) => a > b ? -1 : 1
 
-export { env, isString, merge, mergeArrayOverwrite, freeze, clone, mapobj, any, all, id, timestamp, timestampCompact, load, save, initFile, mkdir, globify, getPathBase, ls, jsonify, sort, sortAscFn, sortDescFn }
+export { env, isString, merge, mergeArrayOverwrite, freeze, clone, mapobj, some, every, id, timestamp, timestampCompact, load, save, initFile, mkdir, globify, getPathBase, ls, jsonify, sort, sortAscFn, sortDescFn }
