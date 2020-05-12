@@ -1,6 +1,5 @@
 import dmerge from 'deepmerge'
 import fs from 'fs'
-import glob from 'glob'
 import mkdirp from 'mkdirp'
 import path from 'path'
 import uuidv4 from '@bundled-es-modules/uuid/v4.js'
@@ -179,23 +178,6 @@ const initFile = (filePath, contentFx) => {
  */
 const mkdir = (dirPath, mode) => {
   mkdirp.sync(dirPath, { mode: mode || 0o755 })
-}
-
-/**
- * globify using selectors (see simple-glob package)
- * {Array} selectors
- * @return {Array} array of full path
- */
-const globify = (...selectors) => {
-  let globFiles = []
-
-  selectors.forEach(s => {
-    glob(s, {}, (er, files) => {
-      globFiles = [...globFiles, ...files]
-    })
-  })
-
-  return globFiles
 }
 
 /**
