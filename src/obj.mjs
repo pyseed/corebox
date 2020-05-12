@@ -94,7 +94,7 @@ const Log = (props = {}) => {
     _someError = true
     _log.error(...args)
     if (history) _errors.push(args.join(' '))
-    return this
+    return false
   }
 
   function fatal (...args) {
