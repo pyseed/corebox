@@ -1,6 +1,5 @@
 import chai from 'chai'
 import sinon from 'sinon'
-import CaptureStdout from 'capture-stdout'
 import { Event, Log, State } from '../src/obj.mjs'
 
 const assert = chai.assert
@@ -134,35 +133,6 @@ suite('obj', () => {
       assert.deepEqual(o.errors(), ['fake error 1'])
       o.error('fake error 2')
       assert.deepEqual(o.errors(), ['fake error 1', 'fake error 2'])
-    })
-
-    test('bunyan', () => {
-      const fakeEnv = 'fake env bunyan'
-      process.env.NODE_ENV = fakeEnv
-      const name = 'mylog'
-
-      const captureStdout = new CaptureStdout()
-      const o = Log({ name })
-      captureStdout.startCapture()
-      o.info('fake info')
-      captureStdout.stopCapture()
-
-      const arrJsonStdout = captureStdout.getCapturedText().map(JSON.parse)
-
-      assert.strictEqual(arrJsonStdout.length, 1)
-      assert.strictEqual(arrJsonStdout[0].name, fakeEnv + ' ' + name)
-      assert.strictEqual(arrJsonStdout[0].msg, 'fake info')
-    })
-
-    test('console-log-level', () => {
-      const o = Log({ log: 'console' })
-
-      const captureStdout = new CaptureStdout()
-      captureStdout.startCapture()
-      o.info('fake info')
-      captureStdout.stopCapture()
-
-      assert.strictEqual(captureStdout.getCapturedText()[0], 'fake info')
     })
   })
 

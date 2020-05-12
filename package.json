@@ -44,12 +44,10 @@
     "bunyan": "^1.8.12",
     "console-log-level": "^1.4.1",
     "deepmerge": "^4.2.2",
-    "mkdirp": "^1.0.4"
+    "mocha": "^7.1.2"
   },
   "devDependencies": {
-    "capture-stdout": "^1.0.0",
     "chai": "^4.2.0",
-    "mocha": "^7.1.2",
     "sinon": "^7.4.0",
     "standard": "^14.3.1"
   }

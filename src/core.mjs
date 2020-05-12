@@ -1,6 +1,5 @@
 import dmerge from 'deepmerge'
 import fs from 'fs'
-import mkdirp from 'mkdirp'
 import path from 'path'
 import uuidv4 from '@bundled-es-modules/uuid/v4.js'
 
@@ -172,12 +171,12 @@ const initFile = (filePath, contentFx) => {
 }
 
 /**
- * save text file
+ * mkdir recursive
  * @param {String}  dirPath  path to create
- * @param {String}  mode     default 0o755
+ * @param {Object}  options  default { mode: 0o755 }
  */
-const mkdir = (dirPath, mode) => {
-  mkdirp.sync(dirPath, { mode: mode || 0o755 })
+const mkdir = (dirPath, options = { mode: 0o755 }) => {
+  fs.mkdirSync(dirPath, { ...options, recursive: true })
 }
 
 /**
@@ -257,4 +256,4 @@ const sort = (arr, fn) => {
 const sortAscFn = (a, b) => a > b ? 1 : -1
 const sortDescFn = (a, b) => a > b ? -1 : 1
 
-export { env, isString, merge, mergeArrayOverwrite, freeze, clone, mapobj, some, every, id, timestamp, timestampCompact, load, save, initFile, mkdir, globify, getPathBase, ls, jsonify, sort, sortAscFn, sortDescFn }
+export { env, isString, merge, mergeArrayOverwrite, freeze, clone, mapobj, some, every, id, timestamp, timestampCompact, load, save, initFile, mkdir, getPathBase, ls, jsonify, sort, sortAscFn, sortDescFn }

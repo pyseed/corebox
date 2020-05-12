@@ -1,7 +1,6 @@
 import chai from 'chai'
 import sinon from 'sinon'
 import fs from 'fs'
-import mkdirp from 'mkdirp'
 import { env, isString, freeze, clone, mapobj, some, every, id, timestamp, timestampCompact, load, save, initFile, mkdir, getPathBase, ls, jsonify, sort, sortAscFn, sortDescFn } from '../src/core.mjs'
 
 const assert = chai.assert
@@ -228,15 +227,15 @@ suite('core', () => {
 
   test('mkdir', () => {
     const fake = sinon.fake.returns(true)
-    sinon.replace(mkdirp, 'sync', fake)
+    sinon.replace(fs, 'mkdirSync', fake)
 
     const dirPath = '/tmp/tmp1'
 
     mkdir(dirPath)
-    sinon.assert.calledWithExactly(mkdirp.sync, dirPath, { mode: 0o755 })
+    sinon.assert.calledWithExactly(fs.mkdirSync, dirPath, { mode: 0o755, recursive: true })
 
-    mkdir(dirPath, 0o750)
-    sinon.assert.calledWithExactly(mkdirp.sync, dirPath, { mode: 0o750 })
+    // mkdir(dirPath, { custom: true })
+    // sinon.assert.calledWithExactly(fs.mkdirSync.sync, dirPath, { custom: true, recursive: true })
   })
 
   test('getPathBase', () => {
