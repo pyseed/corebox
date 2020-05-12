@@ -44,7 +44,7 @@
     "bunyan": "^1.8.12",
     "console-log-level": "^1.4.1",
     "deepmerge": "^4.2.2",
-    "mkdirp": "^0.5.1",
+    "mkdirp": "^1.0.4",
     "simple-glob": "^0.2.0"
   },
   "devDependencies": {
