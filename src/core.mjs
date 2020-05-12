@@ -1,6 +1,6 @@
 import dmerge from 'deepmerge'
 import fs from 'fs'
-import glob from 'simple-glob'
+import glob from 'glob'
 import mkdirp from 'mkdirp'
 import path from 'path'
 import uuidv4 from '@bundled-es-modules/uuid/v4.js'
@@ -186,7 +186,17 @@ const mkdir = (dirPath, mode) => {
  * {Array} selectors
  * @return {Array} array of full path
  */
-const globify = (...selectors) => glob(selectors)
+const globify = (...selectors) => {
+  let globFiles = []
+
+  selectors.forEach(s => {
+    glob(s, {}, (er, files) => {
+      globFiles = [...globFiles, ...files]
+    })
+  })
+
+  return globFiles
+}
 
 /**
  * get file name from path
