@@ -1,7 +1,7 @@
 import chai from 'chai'
 import sinon from 'sinon'
 import fs from 'fs'
-import { env, isString, freeze, clone, mapobj, some, every, id, timestamp, timestampCompact, load, save, initFile, mkdir, getPathBase, ls, jsonify, sort, sortAscFn, sortDescFn } from '../src/core.mjs'
+import { env, isString, isNumber, isArray, isObject, isObjectStrong, freeze, clone, mapobj, some, every, id, timestamp, timestampCompact, load, save, initFile, mkdir, getPathBase, ls, jsonify, sort, sortAscFn, sortDescFn } from '../src/core.mjs'
 
 const assert = chai.assert
 const expect = chai.expect
@@ -26,18 +26,69 @@ suite('core', () => {
     })
   })
 
-  test('isString', () => {
-    assert.strictEqual(isString(undefined), false)
-    assert.strictEqual(isString(true), false)
-    assert.strictEqual(isString(1), false)
-    assert.strictEqual(isString({}), false)
-    assert.strictEqual(isString([]), false)
-    assert.strictEqual(isString(() => {}), false)
+  suite('is', () => {
+    test('isString', () => {
+      assert.strictEqual(isString(undefined), false)
+      assert.strictEqual(isString(true), false)
+      assert.strictEqual(isString(1), false)
+      assert.strictEqual(isString({}), false)
+      assert.strictEqual(isString([]), false)
+      assert.strictEqual(isString(() => {}), false)
 
-    assert.strictEqual(isString(''), true)
-    assert.strictEqual(isString('a'), true)
-    assert.strictEqual(isString(new String('')), true) // eslint-disable-line
-    assert.strictEqual(isString(new String('a')), true) // eslint-disable-line
+      assert.strictEqual(isString(''), true)
+      assert.strictEqual(isString('a'), true)
+      assert.strictEqual(isString(new String('')), true) // eslint-disable-line
+      assert.strictEqual(isString(new String('a')), true) // eslint-disable-line
+    })
+
+    test('isNumber', () => {
+      assert.strictEqual(isNumber(undefined), false)
+      assert.strictEqual(isNumber(true), false)
+      assert.strictEqual(isNumber({}), false)
+      assert.strictEqual(isNumber([]), false)
+      assert.strictEqual(isNumber(() => {}), false)
+      assert.strictEqual(isNumber('a'), false)
+      assert.strictEqual(isNumber(new String('a')), false) // eslint-disable-line
+
+      assert.strictEqual(isNumber(0), true)
+      assert.strictEqual(isNumber(1), true)
+    })
+
+    test('isArray', () => {
+      assert.strictEqual(isArray(undefined), false)
+      assert.strictEqual(isArray(true), false)
+      assert.strictEqual(isArray({}), false)
+      assert.strictEqual(isArray(() => {}), false)
+      assert.strictEqual(isArray('a'), false)
+      assert.strictEqual(isArray(new String('a')), false) // eslint-disable-line
+
+      assert.strictEqual(isArray([]), true)
+      assert.strictEqual(isArray([1]), true)
+    })
+
+    test('isObject', () => {
+      assert.strictEqual(isObject(undefined), false)
+      assert.strictEqual(isObject(true), false)
+      assert.strictEqual(isObject(() => {}), false)
+      assert.strictEqual(isObject('a'), false)
+
+      assert.strictEqual(isObject({}), true)
+      assert.strictEqual(isObject({ one: 1 }), true)
+      assert.strictEqual(isObject([]), true)
+      assert.strictEqual(isObject(new String('')), true) // eslint-disable-line
+    })
+
+    test('isObjectStrong', () => {
+      assert.strictEqual(isObjectStrong(undefined), false)
+      assert.strictEqual(isObjectStrong(true), false)
+      assert.strictEqual(isObjectStrong(() => {}), false)
+      assert.strictEqual(isObjectStrong('a'), false)
+
+      assert.strictEqual(isObjectStrong({}), true)
+      assert.strictEqual(isObjectStrong({ one: 1 }), true)
+      assert.strictEqual(isObjectStrong([]), false)
+      assert.strictEqual(isObjectStrong(new String('')), false) // eslint-disable-line
+    })
   })
 
   test('freeze', () => {

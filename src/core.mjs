@@ -5,7 +5,11 @@ import uuidv4 from '@bundled-es-modules/uuid/v4.js'
 
 const env = () => process.env.NODE_ENV || 'development'
 
-const isString = (str) => typeof str === 'string' || str instanceof String
+const isString = (obj) => typeof obj === 'string' || obj instanceof String
+const isNumber = (obj) => typeof obj === 'number'
+const isArray = (obj) => Array.isArray(obj)
+const isObject = (obj) => typeof obj === 'object'
+const isObjectStrong = (obj) => isObject(obj) && !isArray(obj) && !(obj instanceof String)
 
 /**
  * use deepmerge to merge x, y
@@ -256,4 +260,4 @@ const sort = (arr, fn) => {
 const sortAscFn = (a, b) => a > b ? 1 : -1
 const sortDescFn = (a, b) => a > b ? -1 : 1
 
-export { env, isString, merge, mergeArrayOverwrite, freeze, clone, mapobj, some, every, id, timestamp, timestampCompact, load, save, initFile, mkdir, getPathBase, ls, jsonify, sort, sortAscFn, sortDescFn }
+export { env, isString, isNumber, isArray, isObject, isObjectStrong, merge, mergeArrayOverwrite, freeze, clone, mapobj, some, every, id, timestamp, timestampCompact, load, save, initFile, mkdir, getPathBase, ls, jsonify, sort, sortAscFn, sortDescFn }
