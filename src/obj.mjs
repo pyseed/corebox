@@ -1,4 +1,3 @@
-import bunyan from 'bunyan'
 import consoleLog from 'console-log-level'
 import { EventEmitter } from 'events'
 import { env as envCore, freeze, mergeArrayOverwrite, clone } from './core.mjs'
@@ -38,81 +37,39 @@ const Event = (props = {}) => {
   return freeze({ emit, on, off, once, listeners })
 }
 
-// Log({ log: 'console', level: 'debug/info' })     for https://www.npmjs.com/package/console-log-level
-// Log({ log: 'bunyan', level: 'debug/info' })      for https://github.com/trentm/node-bunyan
-// Log({ level: 'debug/info' })                     for bunyan as default
-// Log({ log: instance, level: 'debug/info' })      for any log system
-// Log({ log: instance })                           for any log system that does not support log level
-// prop history to true will allow to get errors history with errors()
+// kiss ultra lite logging using console-log-level package
+// props:
+// name: log name
+// ts: true/false show timestamp (default false)
+// level: trace, debug, info, warn, error, fatal (default info)
 const Log = (props = {}) => {
-  function createBunyanLogger ({ env, name, level }) {
-    return bunyan.createLogger({ name: env + ' ' + name, level })
-  }
-
-  function dispatchLog (log) {
-    if (log) {
-      if (log === 'console') {
-        return consoleLog({ level })
-      } else if (log === 'bunyan') {
-        return createBunyanLogger({ env, name, level })
-      } else { // raw log
-        return log
-      }
-    } else { // default log
-      return createBunyanLogger({ env, name, level })
-    }
-  }
+  const name = props.name || ''
+  const ts = props.ts === true
+  const level = props.level || 'info'
 
   const env = envCore()
-  const name = props.name || 'default'
-  const level = props.level || 'debug'
-  const history = props.history || false
-  let _someError = false
-  const _errors = []
 
-  const _log = dispatchLog(props.log)
+  const prefix = (level) => {
+    const separator = ' / '
+    let prefix = ''
 
-  const someError = () => _someError
-  const errors = () => _errors
+    if (ts) prefix += new Date().toISOString() + separator
+    prefix += env + separator
+    if (name) prefix += name + separator
+    prefix += level.toUpperCase() + ' =>'
 
-  function debug (...args) {
-    _log.debug(...args)
-    return this
+    return prefix
   }
 
-  function info (...args) {
-    _log.info(...args)
-    return this
+  const log = consoleLog({ prefix, level })
+  const { debug, info, warn, error, fatal } = log
+
+  function fatal2 (...args) {
+    fatal(...args)
+    if (process) process.exit(-1)
   }
 
-  function warn (...args) {
-    _log.warn(...args)
-    return this
-  }
-
-  function error (...args) {
-    _someError = true
-    _log.error(...args)
-    if (history) _errors.push(args.join(' '))
-    return false
-  }
-
-  function fatal (...args) {
-    error('FATAL', ...args)
-    process.exit(-1)
-  }
-
-  return freeze({
-    env,
-    name,
-    someError,
-    errors,
-    debug,
-    info,
-    warn,
-    error,
-    fatal
-  })
+  return freeze({ name, ts, level, env, trace: (...args) => log.trace(...args), debug, info, warn, error, fatal: fatal2 })
 }
 
 const State = (props = {}) => {

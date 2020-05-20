@@ -18,7 +18,7 @@ suite('core', () => {
     })
 
     test('env', () => {
-      const fakeEnv = 'fake env'
+      const fakeEnv = 'fake_env'
       process.env.NODE_ENV = fakeEnv
       assert.strictEqual(env(), fakeEnv)
     })
