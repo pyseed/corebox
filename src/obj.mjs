@@ -1,6 +1,6 @@
 import consoleLog from 'console-log-level'
 import { EventEmitter } from 'events'
-import { env as envCore, freeze, mergeArrayOverwrite, clone } from './core.mjs'
+import { env as envCore, freeze, clone } from './core.mjs'
 
 const Event = (props = {}) => {
   const maxListeners = props.maxListeners || 0
@@ -77,7 +77,7 @@ const State = (props = {}) => {
 
   function state (appendState) {
     if (appendState) {
-      _state = mergeArrayOverwrite(_state, appendState) // pure state
+      _state = { ..._state, ...appendState } // pure state
     }
 
     return freeze(_state)

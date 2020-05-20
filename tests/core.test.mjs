@@ -1,8 +1,9 @@
 import chai from 'chai'
 import sinon from 'sinon'
-import { env, isString, isNumber, isArray, isObject, isObjectStrong, freeze, clone, mapobj, some, every, id, timestamp, timestampCompact, jsonify, sort, sortAscFn, sortDescFn } from '../src/core.mjs'
+import { env, isString, isNumber, isArray, isObject, isObjectStrong, freeze, unfreeze, clone, mapobj, some, every, id, timestamp, timestampCompact, jsonify, sort, sortAscFn, sortDescFn } from '../src/core.mjs'
 
 const assert = chai.assert
+const expect = chai.expect
 
 suite('core', () => {
   const isOdd = x => x % 2 === 0
@@ -90,12 +91,24 @@ suite('core', () => {
   })
 
   test('freeze', () => {
-    const o = { one: 1 }
-    const o2 = freeze(o)
+    const o = freeze({ one: 1 })
     assert.deepEqual(o, { one: 1 })
-    assert.deepEqual(o2, { one: 1 })
-    assert.throws(() => { o.two = 2 }, 'Cannot add property two, object is not extensible')
-    assert.throws(() => { o2.three = 3 }, 'Cannot add property three, object is not extensible')
+    expect(() => {
+      o.two = 2
+    }).to.throw('Cannot add property two, object is not extensible')
+  })
+
+  test('unfreeze', () => {
+    const o = Object.freeze({ one: 1 })
+    expect(() => {
+      o.two = 2
+    }).to.throw('Cannot add property two, object is not extensible')
+
+    const o2 = unfreeze(o)
+    o2.two = 2
+    assert.deepEqual(o2, { one: 1, two: 2 })
+
+    assert.deepEqual(o, { one: 1 })
   })
 
   suite('clone', () => {

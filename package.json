@@ -42,7 +42,6 @@
   "dependencies": {
     "@bundled-es-modules/uuid": "^3.3.2",
     "console-log-level": "^1.4.1",
-    "deepmerge": "^4.2.2",
     "mocha": "^7.1.2"
   },
   "devDependencies": {

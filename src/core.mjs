@@ -1,4 +1,3 @@
-import dmerge from 'deepmerge'
 import uuidv4 from '@bundled-es-modules/uuid/v4.js'
 
 const env = () => process.env.NODE_ENV || 'development'
@@ -10,31 +9,21 @@ const isObject = (obj) => typeof obj === 'object'
 const isObjectStrong = (obj) => isObject(obj) && !isArray(obj) && !(obj instanceof String)
 
 /**
- * use deepmerge to merge x, y
- * @param {Object} x
- * @param {Object} y
- * @return merge object
- */
-const merge = (x, y) => dmerge(x, y)
-
-/**
- * use deepmerge to merge x, y but without merging arrays (overwrite versus append)
- * @param {Object} x
- * @param {Object} y
- * @return merge object
- */
-const mergeArrayOverwrite = (x, y) => {
-  const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray // overwrite arrays
-  return dmerge(x, y, { arrayMerge: overwriteMerge })
-}
-
-/**
- * freeze object
+ * freeze current object
  * @param {Object} obj
- * @return freezed object
+ * @return freezed same object
  */
 const freeze = (obj) => {
   return Object.freeze(obj)
+}
+
+/**
+ * unfreeze object
+ * @param {Object} obj
+ * @return unfreezed cloned object
+ */
+const unfreeze = (obj) => {
+  return { ...obj }
 }
 
 /**
@@ -45,14 +34,9 @@ const freeze = (obj) => {
  * @return clone object
  */
 const clone = (obj, keys) => {
-  let source = keys === undefined ? obj : {}
-
-  if (keys !== undefined) {
-    source = {}
-    keys.forEach(key => { source[key] = obj[key] })
-  }
-
-  return merge({}, source)
+  const source = keys === undefined ? obj : {}
+  if (keys !== undefined) keys.forEach(key => { source[key] = obj[key] })
+  return { ...source }
 }
 
 /**
@@ -63,9 +47,7 @@ const clone = (obj, keys) => {
  */
 const mapobj = (obj, fx) => {
   const newObj = {}
-
   Object.keys(obj).forEach(key => { newObj[key] = fx(obj[key], key) })
-
   return newObj
 }
 
@@ -167,4 +149,4 @@ const sort = (arr, fn) => {
 const sortAscFn = (a, b) => a > b ? 1 : -1
 const sortDescFn = (a, b) => a > b ? -1 : 1
 
-export { env, isString, isNumber, isArray, isObject, isObjectStrong, merge, mergeArrayOverwrite, freeze, clone, mapobj, some, every, id, timestamp, timestampCompact, jsonify, sort, sortAscFn, sortDescFn }
+export { env, isString, isNumber, isArray, isObject, isObjectStrong, freeze, unfreeze, clone, mapobj, some, every, id, timestamp, timestampCompact, jsonify, sort, sortAscFn, sortDescFn }
