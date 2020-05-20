@@ -1,4 +1,6 @@
-# My Project
+# corebox
+
+polymorphic core helpers (browser compatible)
 
 ## WIP
 
