@@ -1,6 +1,6 @@
 import consoleLog from 'console-log-level'
 import { EventEmitter } from 'events'
-import { env as envCore, freeze, clone } from './core.mjs'
+import { _process, env as envCore, freeze, clone } from './core.mjs'
 
 const Event = (props = {}) => {
   const maxListeners = props.maxListeners || 0
@@ -66,7 +66,7 @@ const Log = (props = {}) => {
 
   function fatal2 (...args) {
     fatal(...args)
-    if (process) process.exit(-1)
+    _process().exit(-1)
   }
 
   return freeze({ name, ts, level, env, trace: (...args) => log.trace(...args), debug, info, warn, error, fatal: fatal2 })

@@ -1,6 +1,9 @@
 import uuidv4 from '@bundled-es-modules/uuid/v4.js'
 
-const env = () => process.env.NODE_ENV || 'development'
+// polymorphic process
+const _process = () => typeof window === 'undefined' ? process : { env: { NODE_ENV: 'browser' }, exit: (code) => {} }
+
+const env = () => _process().env.NODE_ENV || 'development'
 
 const isString = (obj) => typeof obj === 'string' || obj instanceof String
 const isNumber = (obj) => typeof obj === 'number'
@@ -149,4 +152,4 @@ const sort = (arr, fn) => {
 const sortAscFn = (a, b) => a > b ? 1 : -1
 const sortDescFn = (a, b) => a > b ? -1 : 1
 
-export { env, isString, isNumber, isArray, isObject, isObjectStrong, freeze, unfreeze, clone, mapobj, some, every, id, timestamp, timestampCompact, jsonify, sort, sortAscFn, sortDescFn }
+export { _process, env, isString, isNumber, isArray, isObject, isObjectStrong, freeze, unfreeze, clone, mapobj, some, every, id, timestamp, timestampCompact, jsonify, sort, sortAscFn, sortDescFn }
