@@ -1,6 +1,6 @@
 import chai from 'chai'
 import sinon from 'sinon'
-import { env, isString, isNumber, isArray, isObject, isObjectStrong, freeze, unfreeze, clone, mapobj, some, every, id, timestamp, timestampCompact, jsonify, sort, sortAscFn, sortDescFn } from '../src/core.mjs'
+import { env, isString, isNumber, isArray, isObject, isObjectStrong, freeze, unfreeze, clone, mapobj, some, every, id, timestamp, timestampCompact, jsonify, sort, sortAscFn, sortDescFn, Log, State } from '../src/corebox.mjs'
 
 const assert = chai.assert
 const expect = chai.expect
@@ -255,6 +255,135 @@ suite('core', () => {
       const arr = [2, 1, 3]
       assert.deepEqual(sort(arr, sortDescFn), [3, 2, 1])
       assert.deepEqual(arr, [2, 1, 3], 'passed array should not be impacted')
+    })
+  })
+
+  suite('Log', () => {
+    test('init default', () => {
+      const o = Log()
+
+      assert.isObject(o)
+      assert.isString(o.name)
+      assert.isBoolean(o.ts)
+      assert.isString(o.level)
+      assert.isFunction(o.trace)
+      assert.isFunction(o.debug)
+      assert.isFunction(o.info)
+      assert.isFunction(o.warn)
+      assert.isFunction(o.error)
+      assert.isFunction(o.fatal)
+      assert.strictEqual(o.name, '')
+      assert.isFalse(o.ts)
+      assert.strictEqual(o.level, 'info')
+      assert.strictEqual(o.env, 'development')
+    })
+
+    test('env', () => {
+      const fakenv = 'fake_env'
+      process.env.NODE_ENV = fakenv
+      const o = Log()
+      assert.strictEqual(o.env, fakenv)
+    })
+
+    test('name', () => {
+      const name = 'name'
+      const o = Log({ name })
+      assert.strictEqual(o.name, name)
+    })
+
+    test('ts', () => {
+      const ts = true
+      const o = Log({ ts })
+      assert.isBoolean(o.ts)
+      assert.isTrue(o.ts)
+
+      const ts2 = 'wrong'
+      const o2 = Log({ ts: ts2 })
+      assert.isBoolean(o2.ts)
+      assert.isFalse(o2.ts)
+    })
+
+    test('level', () => {
+      const level = 'fake_level'
+      const o = Log({ level })
+      assert.strictEqual(o.level, level)
+    })
+
+    test('logging', () => {
+      const log = (fx) => {
+        const spy = sinon.spy(console, fx)
+        o[fx](message)
+        sinon.assert.calledWithExactly(spy, o.prefix(fx), message)
+        spy.restore()
+      }
+
+      const o = Log({ name: 'mylog', ts: true, level: 'debug' })
+      const message = 'awesome log'
+
+      log('debug')
+      log('info')
+      log('warn')
+      log('error')
+    })
+
+    test('logging level range', () => {
+      const o = Log({ name: 'mylog', ts: true, level: 'info' })
+      const message = 'awesome log'
+      let fx
+      let spy
+
+      fx = 'debug'
+      spy = sinon.spy(console, fx)
+      o[fx](message)
+      sinon.assert.notCalled(spy) // out of scope
+      spy.restore()
+
+      fx = 'info'
+      spy = sinon.spy(console, fx)
+      o[fx](message)
+      sinon.assert.called(spy) // scope start
+      spy.restore()
+
+      fx = 'error'
+      spy = sinon.spy(console, fx)
+      o[fx](message)
+      sinon.assert.called(spy) // scope start
+      spy.restore()
+    })
+  })
+
+  suite('State', () => {
+    test('init', () => {
+      const o = State()
+
+      assert.isObject(o)
+      assert.isFunction(o.state)
+      assert.isFunction(o.resetState)
+    })
+
+    test('state()', () => {
+      const o = State()
+
+      assert.deepEqual(o.state(), {})
+      o.state({ one: 1 })
+      assert.deepEqual(o.state(), { one: 1 })
+      o.state({ two: [2] })
+      assert.deepEqual(o.state(), { one: 1, two: [2] })
+      o.state({ two: ['two'] })
+      assert.deepEqual(o.state(), { one: 1, two: ['two'] })
+
+      expect(() => {
+        o.state().three = 3
+      }).to.throw('Cannot add property three, object is not extensible')
+    })
+
+    test('resetState()', () => {
+      const o = State({ three: 3 })
+
+      assert.deepEqual(o.state(), { three: 3 })
+      const resetStateRes = o.resetState()
+      assert.deepEqual(o.state(), {})
+      assert.equal(resetStateRes, o)
     })
   })
 })

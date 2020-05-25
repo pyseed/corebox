@@ -1,9 +1,9 @@
 import uuidv4 from '@bundled-es-modules/uuid/v4.js'
 
 // polymorphic process
-const _process = () => typeof window === 'undefined' ? process : { env: { NODE_ENV: 'browser' }, exit: (code) => {} }
+const _process = typeof window === 'undefined' ? process : { env: { NODE_ENV: 'browser' }, exit: (code) => {} }
 
-const env = () => _process().env.NODE_ENV || 'development'
+const env = () => _process.env.NODE_ENV || 'development'
 
 const isString = (obj) => typeof obj === 'string' || obj instanceof String
 const isNumber = (obj) => typeof obj === 'number'
@@ -152,4 +152,91 @@ const sort = (arr, fn) => {
 const sortAscFn = (a, b) => a > b ? 1 : -1
 const sortDescFn = (a, b) => a > b ? -1 : 1
 
-export { _process, env, isString, isNumber, isArray, isObject, isObjectStrong, freeze, unfreeze, clone, mapobj, some, every, id, timestamp, timestampCompact, jsonify, sort, sortAscFn, sortDescFn }
+// kiss ultra lite logging using console-log-level package
+// props:
+// name: log name
+// ts: true/false show timestamp (default false)
+// level: trace, debug, info, warn, error, fatal (default info)
+const Log = (props = {}) => {
+  const name = props.name || ''
+  const ts = props.ts === true
+  const level = props.level || 'info'
+
+  const _env = env()
+
+  const _levelMap = {
+    trace: 0,
+    debug: 1,
+    info: 2,
+    warn: 3,
+    error: 4,
+    fatal: 5
+  }
+  const _levelIndex = _levelMap[level]
+  const _levelInScope = mapobj(_levelMap, (l) => l >= _levelIndex)
+
+  function prefix (level) {
+    const separator = ' / '
+    let result = ''
+
+    if (ts) result += new Date().toISOString() + separator
+    result += _env + separator
+    if (name) result += name + separator
+    result += level.toUpperCase() + ' =>'
+
+    return result
+  }
+
+  function log (logLevel, args) {
+    if (_levelInScope[logLevel]) (console[logLevel] || console.log)(prefix(logLevel), ...args)
+    return this
+  }
+
+  function trace (...args) {
+    return log('trace', args)
+  }
+
+  function debug (...args) {
+    return log('debug', args)
+  }
+
+  function info (...args) {
+    return log('info', args)
+  }
+
+  function warn (...args) {
+    return log('warn', args)
+  }
+
+  function error (...args) {
+    return log('error', args)
+  }
+
+  function fatal (...args) {
+    log('fatal', args)
+    _process.exit(-1)
+  }
+
+  return freeze({ env: _env, name, ts, level, prefix, log, trace, debug, info, warn, error, fatal })
+}
+
+const State = (props = {}) => {
+  let _state = clone(props)
+
+  function state (appendState) {
+    if (appendState) {
+      _state = { ..._state, ...appendState } // pure state
+    }
+
+    return freeze(_state)
+  }
+
+  function resetState () {
+    _state = {}
+    return this
+  }
+
+  return freeze({ state, resetState })
+}
+
+export { env, isString, isNumber, isArray, isObject, isObjectStrong, freeze, unfreeze, clone, mapobj, some, every, id, timestamp, timestampCompact, jsonify, sort, sortAscFn, sortDescFn, Log, State }
