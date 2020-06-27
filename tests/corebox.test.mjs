@@ -310,20 +310,20 @@ suite('core', () => {
     })
 
     test('logging', () => {
-      const log = (fx) => {
+      const log = (fx, msg) => {
         const spy = sinon.spy(console, fx)
-        o[fx](message)
-        sinon.assert.calledWithExactly(spy, o.prefix(fx), message)
+        o[fx](msg)
+        sinon.assert.calledWithExactly(spy, o.prefix(fx), msg)
         spy.restore()
       }
 
       const o = Log({ name: 'mylog', ts: true, level: 'debug' })
       const message = 'awesome log'
 
-      log('debug')
-      log('info')
-      log('warn')
-      log('error')
+      log('debug', message)
+      log('info', message)
+      log('warn', message)
+      log('error', message)
     })
 
     test('logging level range', () => {
@@ -381,9 +381,8 @@ suite('core', () => {
       const o = State({ three: 3 })
 
       assert.deepEqual(o.state(), { three: 3 })
-      const resetStateRes = o.resetState()
+      o.resetState()
       assert.deepEqual(o.state(), {})
-      assert.equal(resetStateRes, o)
     })
   })
 })

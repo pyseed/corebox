@@ -175,7 +175,7 @@ const Log = (props = {}) => {
   const _levelIndex = _levelMap[level]
   const _levelInScope = mapobj(_levelMap, (l) => l >= _levelIndex)
 
-  function prefix (level) {
+  const prefix = (level) => {
     const separator = ' / '
     let result = ''
 
@@ -185,11 +185,6 @@ const Log = (props = {}) => {
     result += level.toUpperCase() + ' =>'
 
     return result
-  }
-
-  function log (logLevel, args) {
-    if (_levelInScope[logLevel]) (console[logLevel] || console.log)(prefix(logLevel), ...args)
-    return this
   }
 
   function trace (...args) {
@@ -217,13 +212,18 @@ const Log = (props = {}) => {
     _process.exit(-1)
   }
 
+  const log = (logLevel, args) => {
+    if (_levelInScope[logLevel]) (console[logLevel] || console.log)(prefix(logLevel), ...args)
+    return freeze({ log, trace, debug, info, warn, error, fatal }) // chainable logs
+  }
+
   return freeze({ env: _env, name, ts, level, prefix, log, trace, debug, info, warn, error, fatal })
 }
 
 const State = (props = {}) => {
   let _state = clone(props)
 
-  function state (appendState) {
+  const state = (appendState) => {
     if (appendState) {
       _state = { ..._state, ...appendState } // pure state
     }
@@ -231,9 +231,8 @@ const State = (props = {}) => {
     return freeze(_state)
   }
 
-  function resetState () {
+  const resetState = () => {
     _state = {}
-    return this
   }
 
   return freeze({ state, resetState })
