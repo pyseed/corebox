@@ -354,35 +354,36 @@ suite('core', () => {
 
   suite('State', () => {
     test('init', () => {
-      const o = State()
+      const o = new State()
 
       assert.isObject(o)
-      assert.isFunction(o.state)
-      assert.isFunction(o.resetState)
+      assert.deepEqual(o._data, {})
+      assert.isFunction(o.data)
+      assert.isFunction(o.reset)
     })
 
-    test('state()', () => {
-      const o = State()
+    test('data()', () => {
+      const o = new State()
 
-      assert.deepEqual(o.state(), {})
-      o.state({ one: 1 })
-      assert.deepEqual(o.state(), { one: 1 })
-      o.state({ two: [2] })
-      assert.deepEqual(o.state(), { one: 1, two: [2] })
-      o.state({ two: ['two'] })
-      assert.deepEqual(o.state(), { one: 1, two: ['two'] })
+      o.data({ one: 1 })
+      assert.deepEqual(o._data, { one: 1 })
+      assert.deepEqual(o.data(), { one: 1 })
+      o.data({ two: [2] })
+      assert.deepEqual(o._data, { one: 1, two: [2] })
+      o.data({ two: ['two'] })
+      assert.deepEqual(o._data, { one: 1, two: ['two'] })
 
       expect(() => {
-        o.state().three = 3
+        o.data().three = 3
       }).to.throw('Cannot add property three, object is not extensible')
     })
 
-    test('resetState()', () => {
-      const o = State({ three: 3 })
+    test('reset()', () => {
+      const o = new State({ three: 3 })
 
-      assert.deepEqual(o.state(), { three: 3 })
-      o.resetState()
-      assert.deepEqual(o.state(), {})
+      assert.deepEqual(o._data, { three: 3 })
+      o.reset()
+      assert.deepEqual(o._data, {})
     })
   })
 })

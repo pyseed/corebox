@@ -220,22 +220,22 @@ const Log = (props = {}) => {
   return freeze({ env: _env, name, ts, level, prefix, log, trace, debug, info, warn, error, fatal })
 }
 
-const State = (props = {}) => {
-  let _state = clone(props)
+class State {
+  constructor (props) {
+    this._data = clone(props)
+  }
 
-  const state = (appendState) => {
-    if (appendState) {
-      _state = { ..._state, ...appendState } // pure state
+  data (data) {
+    if (data) {
+      this._data = { ...this._data, ...data } // pure state
     }
 
-    return freeze(_state)
+    return freeze(this._data)
   }
 
-  const resetState = () => {
-    _state = {}
+  reset () {
+    this._data = {}
   }
-
-  return freeze({ state, resetState })
 }
 
 export { env, isString, isNumber, isArray, isObject, isObjectStrong, freeze, unfreeze, clone, mapobj, some, every, id, timestamp, timestampCompact, jsonify, sort, sortAscFn, sortDescFn, Log, State }
