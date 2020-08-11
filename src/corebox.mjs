@@ -157,71 +157,76 @@ const sortDescFn = (a, b) => a > b ? -1 : 1
 // name: log name
 // ts: true/false show timestamp (default false)
 // level: trace, debug, info, warn, error, fatal (default info)
-const Log = (props = {}) => {
-  const name = props.name || ''
-  const ts = props.ts === true
-  const level = props.level || 'info'
+class Log {
+  constructor (props = {}) {
+    this.name = props.name || ''
+    this.ts = props.ts === true
+    this.level = props.level || 'info'
 
-  const _env = env()
+    this.env = env()
 
-  const _levelMap = {
-    trace: 0,
-    debug: 1,
-    info: 2,
-    warn: 3,
-    error: 4,
-    fatal: 5
+    this.mapLevel()
   }
-  const _levelIndex = _levelMap[level]
-  const _levelInScope = mapobj(_levelMap, (l) => l >= _levelIndex)
 
-  const prefix = (level) => {
+  mapLevel () {
+    const levelMap = {
+      trace: 0,
+      debug: 1,
+      info: 2,
+      warn: 3,
+      error: 4,
+      fatal: 5
+    }
+
+    this.levelIndex = levelMap[this.level]
+    this.levelInScope = mapobj(levelMap, (l) => l >= this.levelIndex)
+  }
+
+  prefix (level) {
     const separator = ' / '
     let result = ''
 
-    if (ts) result += new Date().toISOString() + separator
-    result += _env + separator
-    if (name) result += name + separator
-    result += level.toUpperCase() + ' =>'
+    if (this.ts) result += new Date().toISOString() + separator
+    result += this.env + separator
+    if (this.name) result += this.name + separator
+    result += this.level.toUpperCase() + ' =>'
 
     return result
   }
 
-  function trace (...args) {
-    return log('trace', args)
+  trace (...args) {
+    return this.log('trace', args)
   }
 
-  function debug (...args) {
-    return log('debug', args)
+  debug (...args) {
+    return this.log('debug', args)
   }
 
-  function info (...args) {
-    return log('info', args)
+  info (...args) {
+    return this.log('info', args)
   }
 
-  function warn (...args) {
-    return log('warn', args)
+  warn (...args) {
+    return this.log('warn', args)
   }
 
-  function error (...args) {
-    return log('error', args)
+  error (...args) {
+    return this.log('error', args)
   }
 
-  function fatal (...args) {
-    log('fatal', args)
+  fatal (...args) {
+    this.log('fatal', args)
     _process.exit(-1)
   }
 
-  const log = (logLevel, args) => {
-    if (_levelInScope[logLevel]) (console[logLevel] || console.log)(prefix(logLevel), ...args)
-    return freeze({ log, trace, debug, info, warn, error, fatal }) // chainable logs
+  log (logLevel, args) {
+    if (this.levelInScope[logLevel]) (console[logLevel] || console.log)(this.prefix(logLevel), ...args)
+    return this // chainable logs
   }
-
-  return freeze({ env: _env, name, ts, level, prefix, log, trace, debug, info, warn, error, fatal })
 }
 
 class State {
-  constructor (props) {
+  constructor (props = {}) {
     this._data = clone(props)
   }
 

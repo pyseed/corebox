@@ -260,7 +260,7 @@ suite('core', () => {
 
   suite('Log', () => {
     test('init default', () => {
-      const o = Log()
+      const o = new Log()
 
       assert.isObject(o)
       assert.isString(o.name)
@@ -281,31 +281,31 @@ suite('core', () => {
     test('env', () => {
       const fakenv = 'fake_env'
       process.env.NODE_ENV = fakenv
-      const o = Log()
+      const o = new Log()
       assert.strictEqual(o.env, fakenv)
     })
 
     test('name', () => {
       const name = 'name'
-      const o = Log({ name })
+      const o = new Log({ name })
       assert.strictEqual(o.name, name)
     })
 
     test('ts', () => {
       const ts = true
-      const o = Log({ ts })
+      const o = new Log({ ts })
       assert.isBoolean(o.ts)
       assert.isTrue(o.ts)
 
       const ts2 = 'wrong'
-      const o2 = Log({ ts: ts2 })
+      const o2 = new Log({ ts: ts2 })
       assert.isBoolean(o2.ts)
       assert.isFalse(o2.ts)
     })
 
     test('level', () => {
       const level = 'fake_level'
-      const o = Log({ level })
+      const o = new Log({ level })
       assert.strictEqual(o.level, level)
     })
 
@@ -317,7 +317,7 @@ suite('core', () => {
         spy.restore()
       }
 
-      const o = Log({ name: 'mylog', ts: true, level: 'debug' })
+      const o = new Log({ name: 'mylog', ts: true, level: 'debug' })
       const message = 'awesome log'
 
       log('debug', message)
@@ -327,7 +327,7 @@ suite('core', () => {
     })
 
     test('logging level range', () => {
-      const o = Log({ name: 'mylog', ts: true, level: 'info' })
+      const o = new Log({ name: 'mylog', ts: true, level: 'info' })
       const message = 'awesome log'
       let fx
       let spy
