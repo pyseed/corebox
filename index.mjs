@@ -1,3 +1,3 @@
-import { env, isString, isNumber, isArray, isObject, isObjectStrong, freeze, clone, mapobj, some, every, id, timestamp, timestampCompact, jsonify, sort, sortAscFn, sortDescFn, Log, State } from './src/corebox.mjs'
+import { env, isString, isNumber, isArray, isObject, isObjectStrong, freeze, clone, cloneDeep, mapobj, some, every, id, timestamp, timestampCompact, jsonify, sort, sortAscFn, sortDescFn, Log, State } from './src/corebox.mjs'
 
-export { env, isString, isNumber, isArray, isObject, isObjectStrong, freeze, clone, mapobj, some, every, id, timestamp, timestampCompact, jsonify, sort, sortAscFn, sortDescFn, Log, State }
+export { env, isString, isNumber, isArray, isObject, isObjectStrong, freeze, clone, cloneDeep, mapobj, some, every, id, timestamp, timestampCompact, jsonify, sort, sortAscFn, sortDescFn, Log, State }
