@@ -189,7 +189,7 @@ class Log {
     if (this.ts) result += new Date().toISOString() + separator
     result += this.env + separator
     if (this.name) result += this.name + separator
-    result += this.level.toUpperCase() + ' =>'
+    result += level.toUpperCase() + ' =>'
 
     return result
   }
