@@ -30,7 +30,7 @@ const unfreeze = (obj) => {
 }
 
 /**
- * pure clone of given object
+ * shallow clone of given object
  * to set a subset of obj, specify the selected keys
  * @param {Object}  obj    source object
  * @param {Array}   keys   keys to select for a subset (default no subset)
@@ -41,6 +41,8 @@ const clone = (obj, keys) => {
   if (keys !== undefined) keys.forEach(key => { source[key] = obj[key] })
   return { ...source }
 }
+
+const cloneDeep = (obj) => JSON.parse(JSON.stringify(obj))
 
 /**
  * map to new object (original is kept as it)
@@ -243,4 +245,4 @@ class State {
   }
 }
 
-export { env, isString, isNumber, isArray, isObject, isObjectStrong, freeze, unfreeze, clone, mapobj, some, every, id, timestamp, timestampCompact, jsonify, sort, sortAscFn, sortDescFn, Log, State }
+export { env, isString, isNumber, isArray, isObject, isObjectStrong, freeze, unfreeze, clone, cloneDeep, mapobj, some, every, id, timestamp, timestampCompact, jsonify, sort, sortAscFn, sortDescFn, Log, State }

@@ -1,6 +1,6 @@
 import chai from 'chai'
 import sinon from 'sinon'
-import { env, isString, isNumber, isArray, isObject, isObjectStrong, freeze, unfreeze, clone, mapobj, some, every, id, timestamp, timestampCompact, jsonify, sort, sortAscFn, sortDescFn, Log, State } from '../src/corebox.mjs'
+import { env, isString, isNumber, isArray, isObject, isObjectStrong, freeze, unfreeze, clone, cloneDeep, mapobj, some, every, id, timestamp, timestampCompact, jsonify, sort, sortAscFn, sortDescFn, Log, State } from '../src/corebox.mjs'
 
 const assert = chai.assert
 const expect = chai.expect
@@ -118,7 +118,7 @@ suite('core', () => {
       assert.deepEqual(o, {})
       o.one = 1
       assert.deepEqual(o, { one: 1 })
-      assert.deepEqual(source, {}, 'source should be intact')
+      assert.deepEqual(source, {}, 'source should be unchanged')
     })
 
     test('legacy', () => {
@@ -128,7 +128,7 @@ suite('core', () => {
 
       o.two = 2
       assert.deepEqual(o, { one: 1, two: 2 })
-      assert.deepEqual(source, { one: 1 }, 'source should be intact')
+      assert.deepEqual(source, { one: 1 }, 'source should be unchanged')
     })
 
     test('subset', () => {
@@ -138,7 +138,29 @@ suite('core', () => {
 
       o.three = 3
       assert.deepEqual(o, { one: 1, three: 3 })
-      assert.deepEqual(source, { one: 1, two: 2 }, 'source should be intact')
+      assert.deepEqual(source, { one: 1, two: 2 }, 'source should be unchanged')
+    })
+  })
+
+  suite('cloneDeep', () => {
+    test('empty', () => {
+      const source = {}
+      const o = cloneDeep(source)
+      assert.deepEqual(o, {})
+
+      o.one = 1
+      assert.deepEqual(o, { one: 1 })
+      assert.deepEqual(source, {}, 'source should be unchanged')
+    })
+
+    test('legacy', () => {
+      const source = { one: 1, two: 2 }
+      const o = cloneDeep(source)
+      assert.deepEqual(o, { one: 1, two: 2 })
+
+      delete o.two
+      assert.deepEqual(o, { one: 1 })
+      assert.deepEqual(source, { one: 1, two: 2 }, 'source should not be impacted by delete of two in clone')
     })
   })
 
