@@ -282,7 +282,7 @@ describe('core', () => {
       expect(o.name).toBe('')
       expect(o.ts).toBeFalsy()
       expect(o.level).toBe('info')
-      expect(o.env).toBe('test')
+      expect(o.env).toBe('development')
     })
 
     test('env', () => {
@@ -321,7 +321,7 @@ describe('core', () => {
         expect(spy).toBeCalledWith(o.prefix(fx), msg)
       }
 
-      const o = new Log({ name: 'mylog', ts: true, level: 'debug' })
+      const o = new Log({ name: 'mylog', ts: false, level: 'debug' }) // no ts to compare strictly expected and received
       const message = 'awesome log'
 
       log('debug', message, o)
@@ -331,25 +331,20 @@ describe('core', () => {
     })
 
     test('logging level range', () => {
-      const o = new Log({ name: 'mylog', ts: true, level: 'info' })
+      const o = new Log({ name: 'mylog-level-range', ts: true, level: 'info' })
       const message = 'awesome log'
-      let fx
-      let spy
 
-      fx = 'debug'
-      spy = jest.spyOn(console, fx)
-      o[fx](message)
-      expect(spy).not.toBeCalled() // level out of scope
+      const spy1 = jest.spyOn(console, 'debug')
+      o.debug(message)
+      expect(spy1).not.toBeCalled() // level out of scope
 
-      fx = 'info'
-      spy = jest.spyOn(console, fx)
-      o[fx](message)
-      expect(spy).toBeCalled() // scope start
+      const spy2 = jest.spyOn(console, 'info')
+      o.info(message)
+      expect(spy2).toBeCalled() // scope start
 
-      fx = 'error'
-      spy = jest.spyOn(console, fx)
-      o[fx](message)
-      expect(spy).toBeCalled() // scope start // scope start
+      const spy3 = jest.spyOn(console, 'error')
+      o.error(message)
+      expect(spy3).toBeCalled()
     })
   })
 
