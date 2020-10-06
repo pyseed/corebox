@@ -246,13 +246,13 @@ describe('core', () => {
     const obj = { one: 1 }
 
     jsonify(obj)
-    expect(jsonStringifySpy).toBeCalledWith(obj, null, null)
+    expect(jsonStringifySpy).toHaveBeenLastCalledWith(obj, null, null)
 
     jsonify(obj, false)
-    expect(jsonStringifySpy).toBeCalledWith(obj, null, null)
+    expect(jsonStringifySpy).toHaveBeenLastCalledWith(obj, null, null)
 
     jsonify(obj, true)
-    expect(jsonStringifySpy).toBeCalledWith(obj, null, 4) // with 4 indent
+    expect(jsonStringifySpy).toHaveBeenLastCalledWith(obj, null, 4) // with 4 indent
   })
 
   describe('sort', () => {
@@ -318,7 +318,7 @@ describe('core', () => {
       const log = (fx, msg, o) => {
         const spy = jest.spyOn(console, fx)
         o[fx](msg)
-        expect(spy).toBeCalledWith(o.prefix(fx), msg)
+        expect(spy).toHaveBeenLastCalledWith(o.prefix(fx), msg)
       }
 
       const o = new Log({ name: 'mylog', ts: false, level: 'debug' }) // no ts to compare strictly expected and received
@@ -336,15 +336,15 @@ describe('core', () => {
 
       const spy1 = jest.spyOn(console, 'debug')
       o.debug(message)
-      expect(spy1).not.toBeCalled() // level out of scope
+      expect(spy1).not.toHaveBeenCalled() // level out of scope
 
       const spy2 = jest.spyOn(console, 'info')
       o.info(message)
-      expect(spy2).toBeCalled() // scope start
+      expect(spy2).toHaveBeenLastCalledWith() // scope start
 
       const spy3 = jest.spyOn(console, 'error')
       o.error(message)
-      expect(spy3).toBeCalled()
+      expect(spy3).toHaveBeenLastCalledWith()
     })
   })
 
