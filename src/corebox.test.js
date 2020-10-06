@@ -1,15 +1,16 @@
+import { jest } from '@jest/globals'
 import { env, isString, isNumber, isArray, isObject, isObjectStrong, freeze, unfreeze, clone, cloneDeep, mapobj, some, every, id, timestamp, timestampCompact, jsonify, sort, sortAscFn, sortDescFn, Log, State } from '../src/corebox.mjs'
 
-suite('core', () => {
+describe('core', () => {
   const isOdd = x => x % 2 === 0
 
   afterEach(() => {
     delete process.env.NODE_ENV
   })
 
-  suite('Env', () => {
+  describe('env', () => {
     test('default', () => {
-      expect(env()).toBe('development')
+      expect(env()).toBe('test')
     })
 
     test('env', () => {
@@ -19,7 +20,7 @@ suite('core', () => {
     })
   })
 
-  suite('is', () => {
+  describe('is', () => {
     test('isString', () => {
       expect(isString(undefined)).toBeFalsy()
       expect(isString(true)).toBeFalsy()
@@ -31,31 +32,28 @@ suite('core', () => {
       expect(isString('')).toBeTruthy()
       expect(isString('a')).toBeTruthy()
       expect(isString(new String(''))).toBeTruthy() // eslint-disable-line
-      expect(isString(new String('a'))).toBeTruthy()  // eslint-disable-line
+      expect(isString(new String('a'))).toBeTruthy() // eslint-disable-line
     })
 
     test('isNumber', () => {
       expect(isNumber(undefined)).toBeFalsy()
       expect(isNumber(true)).toBeFalsy()
-      expect(isNumber(1)).toBeFalsy()
       expect(isNumber({})).toBeFalsy()
       expect(isNumber([])).toBeFalsy()
       expect(isNumber(() => {})).toBeFalsy()
       expect(isNumber('a')).toBeFalsy()
-      expect(isNumber(new String('a'))).toBeFalsy()
-
+      expect(isNumber(new String('a'))).toBeFalsy() // eslint-disable-line
 
       expect(isNumber(0)).toBeTruthy()
       expect(isNumber(1)).toBeTruthy()
     })
 
-    test('isArray', () => {
-      expect(isArray(undefined)).toBeFalsy()
+    test('isArray', () => {// eslint-disable-line
       expect(isArray(true)).toBeFalsy()
       expect(isArray({})).toBeFalsy()
       expect(isArray(() => {})).toBeFalsy()
       expect(isArray('a')).toBeFalsy()
-      expect(isArray(new String('a'))).toBeFalsy()
+      expect(isArray(new String('a'))).toBeFalsy() // eslint-disable-line
 
       expect(isArray([])).toBeTruthy()
       expect(isArray([1])).toBeTruthy()
@@ -70,7 +68,7 @@ suite('core', () => {
       expect(isObject({})).toBeTruthy()
       expect(isObject({ one: 1 })).toBeTruthy()
       expect(isObject([])).toBeTruthy()
-      expect(isObject(new String('')).toBeTruthy() // eslint-disable-line
+      expect(isObject(new String(''))).toBeTruthy() // eslint-disable-line
     })
 
     test('isObjectStrong', () => {
@@ -79,16 +77,16 @@ suite('core', () => {
       expect(isObjectStrong(() => {})).toBeFalsy()
       expect(isObjectStrong('a')).toBeFalsy()
 
-      expect(isObject({})).toBeTruthy()
-      expect(isObject({ one: 1 })).toBeTruthy()
-      expect(isObject([])).toBeFalsy()
-      expect(isObject(new String('')).toBeFalsy() // eslint-disable-line
+      expect(isObjectStrong({})).toBeTruthy()
+      expect(isObjectStrong({ one: 1 })).toBeTruthy()
+      expect(isObjectStrong([])).toBeFalsy()
+      expect(isObjectStrong(new String(''))).toBeFalsy() // eslint-disable-line
     })
   })
 
   test('freeze', () => {
     const o = freeze({ one: 1 })
-    expect(o).toBe({ one: 1 })
+    expect(o).toStrictEqual({ one: 1 })
     expect(() => {
       o.two = 2
     }).toThrow('Cannot add property two, object is not extensible')
@@ -102,83 +100,83 @@ suite('core', () => {
 
     const o2 = unfreeze(o)
     o2.two = 2
-    expect(o2).toBe({ one: 1, two: 2 })
+    expect(o2).toStrictEqual({ one: 1, two: 2 })
 
-    expect(o).toBe({ one: 1 })
+    expect(o).toStrictEqual({ one: 1 })
   })
 
-  suite('clone', () => {
+  describe('clone', () => {
     test('empty', () => {
       const source = {}
       const o = clone(source)
-      expect(o).toBe({})
+      expect(o).toStrictEqual({})
       o.one = 1
-      expect(o).toBe({ one: 1 })
-      expect(source).toBe({}) // source should be unchanged
+      expect(o).toStrictEqual({ one: 1 })
+      expect(source).toStrictEqual({}) // source should be unchanged
     })
 
     test('legacy', () => {
       const source = { one: 1 }
       const o = clone(source)
-      expect(o).toBe({ one: 1 })
+      expect(o).toStrictEqual({ one: 1 })
 
       o.two = 2
-      expect(o).toBe({ one: 1, two: 2 })
-      expect(source).toBe({ one: 1 }) // source should be unchanged
+      expect(o).toStrictEqual({ one: 1, two: 2 })
+      expect(source).toStrictEqual({ one: 1 }) // source should be unchanged
     })
 
     test('subset', () => {
       const source = { one: 1, two: 2 }
       const o = clone(source, ['one'])
-      expect(o).toBe({ one: 1 })
+      expect(o).toStrictEqual({ one: 1 })
 
       o.three = 3
-      expect(o).toBe({ one: 1, three: 3 })
-      expect(source).toBe({ one: 1, two: 2 } // source should be unchanged
+      expect(o).toStrictEqual({ one: 1, three: 3 })
+      expect(source).toStrictEqual({ one: 1, two: 2 }) // source should be unchanged
     })
   })
 
-  suite('cloneDeep', () => {
+  describe('cloneDeep', () => {
     test('empty', () => {
       const source = {}
       const o = cloneDeep(source)
-      expect(o).toBe({})
+      expect(o).toStrictEqual({})
 
       o.one = 1
-      expect(o).toBe({ one: 1 })
-      expect(source).toBe({}) // source should be unchanged
+      expect(o).toStrictEqual({ one: 1 })
+      expect(source).toStrictEqual({}) // source should be unchanged
     })
 
     test('legacy', () => {
       const source = { one: 1, two: 2 }
       const o = cloneDeep(source)
-      expect(o).toBe({ one: 1, two: 2 })
+      expect(o).toStrictEqual({ one: 1, two: 2 })
 
       delete o.two
-      expect(o).toBe({ one: 1 })
-      expect(source).toBe({ one: 1, two: 2 }) // source should not be impacted by delete of two in clone
+      expect(o).toStrictEqual({ one: 1 })
+      expect(source).toStrictEqual({ one: 1, two: 2 }) // source should not be impacted by delete of two in clone
     })
   })
 
-  suite('mapobj', () => {
+  describe('mapobj', () => {
     test('empty', () => {
       const source = {}
       const o = mapobj(source, x => x * 2)
-      expect(o).toBe({})
+      expect(o).toStrictEqual({})
       o.one = 1
-      expect(o).toBe({ one: 1 })
-      expect(source).toBe({} // source should be intact
+      expect(o).toStrictEqual({ one: 1 })
+      expect(source).toStrictEqual({}) // source should be intact
     })
 
     test('map', () => {
       const source = { one: 1, two: 2, three: 3 }
       const o = mapobj(source, x => x * 2)
-      expect(o).toBe({ one: 2, two: 4, three: 6 })
-      expect(source).toBe({ one: 1, two: 2, three: 3 } // source should be intact
+      expect(o).toStrictEqual({ one: 2, two: 4, three: 6 })
+      expect(source).toStrictEqual({ one: 1, two: 2, three: 3 }) // source should be intact
     })
   })
 
-  suite('some', () => {
+  describe('some', () => {
     test('array', () => {
       expect(some([], isOdd)).toBeFalsy()
       expect(some([1], isOdd)).toBeFalsy()
@@ -198,21 +196,21 @@ suite('core', () => {
     })
   })
 
-  suite('every', () => {
+  describe('every', () => {
     test('array', () => {
       expect(every([], isOdd)).toBeTruthy()
       expect(every([1], isOdd)).toBeFalsy()
       expect(every([1, 2], isOdd)).toBeFalsy()
-      expect(every([2], isOdd)) .toBeTruthy()
+      expect(every([2], isOdd)).toBeTruthy()
       expect(every([2, 4], isOdd)).toBeTruthy()
     })
 
     test('object', () => {
-      expect(every({}, isOdd), true).toBeTruthy()
+      expect(every({}, isOdd)).toBeTruthy()
       expect(every({ one: 1 }, isOdd)).toBeFalsy()
-      expect(every({ one: 1, two: 2 }), false).toBeFalsy()
+      expect(every({ one: 1, two: 2 }, isOdd)).toBeFalsy()
       expect(every({ two: 2 }, isOdd)).toBeTruthy()
-      expect(every({ two: 2, four: 4 }, isOdd), true).toBeTruthy()
+      expect(every({ two: 2, four: 4 }, isOdd)).toBeTruthy()
     })
   })
 
@@ -220,7 +218,7 @@ suite('core', () => {
     expect(id().length).toBe(36)
   })
 
-  suite('timestamp', () => {
+  describe('timestamp', () => {
     test('timestamp', () => {
       const ts = timestamp() // 2019-06-10T12:08:39.643Z
 
@@ -236,49 +234,48 @@ suite('core', () => {
     test('compact timestamp, new timestamp', () => {
       const ts = timestampCompact()
 
-      assert.deepEqual(ts.length, 19)
-      assert.deepEqual(ts[8], '_')
-      assert.deepEqual(ts[15], '_')
       expect(ts.length).toBe(19)
       expect(ts[8]).toBe('_')
       expect(ts[15]).toBe('_')
     })
   })
 
-  test('jsonify', () => {
+  /* eslint-env jest */
+  describe('jsonify', () => {
+    const jsonStringifySpy = jest.spyOn(JSON, 'stringify')
     const obj = { one: 1 }
 
     jsonify(obj)
-    expect(JSON.stringify).toBeCalledWith(obj, null, null)
+    expect(jsonStringifySpy).toBeCalledWith(obj, null, null)
 
     jsonify(obj, false)
-    expect(JSON.stringify).toBeCalledWith(obj, null, null)
+    expect(jsonStringifySpy).toBeCalledWith(obj, null, null)
 
     jsonify(obj, true)
-    expect(JSON.stringify).toBeCalledWith(obj, null, 4) // with 4 indent
+    expect(jsonStringifySpy).toBeCalledWith(obj, null, 4) // with 4 indent
   })
 
-  suite('sort', () => {
+  describe('sort', () => {
     test('pure sort', () => {
       const arr = [2, 1, 3]
-      expect(sort(arr, (a, b) => a > b ? 1 : -1)).toBe([1, 2, 3])
-      expect(arr).toBe([2, 1, 3]) // passed array should not be impacted
+      expect(sort(arr, (a, b) => a > b ? 1 : -1)).toStrictEqual([1, 2, 3])
+      expect(arr).toStrictEqual([2, 1, 3]) // passed array should not be impacted
     })
 
     test('sortAscFn', () => {
       const arr = [2, 1, 3]
-      expect(sort(arr, sortAscFn)).toBe([1, 2, 3])
-      expect(arr).toBe([2, 1, 3]) // passed array should not be impacted
+      expect(sort(arr, sortAscFn)).toStrictEqual([1, 2, 3])
+      expect(arr).toStrictEqual([2, 1, 3]) // passed array should not be impacted
     })
 
     test('sortDescFn', () => {
       const arr = [2, 1, 3]
-      expect(sort(arr, sortDescFn)).toBe([3, 2, 1])
-      expect(arr).toBe([2, 1, 3]) // passed array should not be impacted
+      expect(sort(arr, sortDescFn)).toStrictEqual([3, 2, 1])
+      expect(arr).toStrictEqual([2, 1, 3]) // passed array should not be impacted
     })
   })
 
-  suite('Log', () => {
+  describe('Log', () => {
     test('init default', () => {
       const o = new Log()
 
@@ -304,7 +301,7 @@ suite('core', () => {
     test('ts', () => {
       const ts = true
       const o = new Log({ ts })
-      expect(o.ts).toBeTruely()
+      expect(o.ts).toBeTruthy()
 
       const ts2 = 'wrong'
       const o2 = new Log({ ts: ts2 })
@@ -319,8 +316,9 @@ suite('core', () => {
 
     test('logging', () => {
       const log = (fx, msg, o) => {
+        const spy = jest.spyOn(console, fx)
         o[fx](msg)
-        expect(console[fx]).toBeCalledWith(o.prefix(fx), msg)
+        expect(spy).toBeCalledWith(o.prefix(fx), msg)
       }
 
       const o = new Log({ name: 'mylog', ts: true, level: 'debug' })
@@ -336,37 +334,41 @@ suite('core', () => {
       const o = new Log({ name: 'mylog', ts: true, level: 'info' })
       const message = 'awesome log'
       let fx
+      let spy
 
       fx = 'debug'
+      spy = jest.spyOn(console, fx)
       o[fx](message)
-      expect(console[fx]).toBeNotCalled() // level out of scope
+      expect(spy).not.toBeCalled() // level out of scope
 
       fx = 'info'
+      spy = jest.spyOn(console, fx)
       o[fx](message)
-      expect(console[fx]).toBeCalled() // scope start
+      expect(spy).toBeCalled() // scope start
 
       fx = 'error'
+      spy = jest.spyOn(console, fx)
       o[fx](message)
-      expect(console[fx]).toBeCalled() // scope start // scope start
+      expect(spy).toBeCalled() // scope start // scope start
     })
   })
 
-  suite('State', () => {
+  describe('State', () => {
     test('init', () => {
       const o = new State()
-      expect(o._data).toBe({})
+      expect(o._data).toStrictEqual({})
     })
 
     test('data()', () => {
       const o = new State()
 
       o.data({ one: 1 })
-      expect(o._data).toBe({ one: 1 })
-      expect(o.data()).toBe({ one: 1 })
+      expect(o._data).toStrictEqual({ one: 1 })
+      expect(o.data()).toStrictEqual({ one: 1 })
       o.data({ two: [2] })
-      expect(o._data).toBe({ one: 1, two: [2] })
+      expect(o._data).toStrictEqual({ one: 1, two: [2] })
       o.data({ two: ['two'] })
-      expect(o._data).toBe({ one: 1, two: ['two'] })
+      expect(o._data).toStrictEqual({ one: 1, two: ['two'] })
 
       expect(() => {
         o.data().three = 3
@@ -376,9 +378,9 @@ suite('core', () => {
     test('reset()', () => {
       const o = new State({ three: 3 })
 
-      expect(o._data).toBe({ three: 3 })
+      expect(o._data).toStrictEqual({ three: 3 })
       o.reset()
-      expect(o._data).toBe({})
+      expect(o._data).toStrictEqual({})
     })
   })
 })

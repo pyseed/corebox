@@ -39,7 +39,7 @@
     "testEnvironment": "jest-environment-node",
     "transform": {},
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.[jt]sx?$",
-    "verbose": true
+    "verbose": false
   },
   "dependencies": {
     "@bundled-es-modules/uuid": "^3.3.2"
