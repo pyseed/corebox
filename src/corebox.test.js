@@ -1,7 +1,5 @@
 import { env, isString, isNumber, isArray, isObject, isObjectStrong, freeze, unfreeze, clone, cloneDeep, mapobj, some, every, id, timestamp, timestampCompact, jsonify, sort, sortAscFn, sortDescFn, Log, State } from '../src/corebox.mjs'
 
-jest.mock('JSON')
-
 suite('core', () => {
   const isOdd = x => x % 2 === 0
 
@@ -248,8 +246,6 @@ suite('core', () => {
   })
 
   test('jsonify', () => {
-    JSON.stringify.mockResolvedValue('fake')
-
     const obj = { one: 1 }
 
     jsonify(obj)
