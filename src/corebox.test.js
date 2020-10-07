@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals'
-import { env, isString, isNumber, isArray, isObject, isObjectStrong, freeze, unfreeze, clone, cloneDeep, mapobj, some, every, id, timestamp, timestampCompact, jsonify, sort, sortAscFn, sortDescFn, Log, State } from '../src/corebox.mjs'
+import { env, isString, isNumber, isArray, isObject, isObjectStrong, freeze, unfreeze, clone, cloneDeep, mapobj, some, every, id, timestamp, timestampCompact, jsonify, sort, sortAscFn, sortDescFn, Log, State } from './corebox.mjs'
 
 describe('core', () => {
   const isOdd = x => x % 2 === 0
