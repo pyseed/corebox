@@ -163,14 +163,11 @@ class Log {
   constructor (props = {}) {
     this.name = props.name || ''
     this.ts = props.ts === true
-    this.level = props.level || 'info'
-
     this.env = env()
-
-    this.mapLevel()
+    this.setLevel(props.level || 'info')
   }
 
-  mapLevel () {
+  setLevel (level) {
     const levelMap = {
       trace: 0,
       debug: 1,
@@ -180,6 +177,7 @@ class Log {
       fatal: 5
     }
 
+    this.level = level
     this.levelIndex = levelMap[this.level]
     this.levelInScope = mapobj(levelMap, (l) => l >= this.levelIndex)
   }
